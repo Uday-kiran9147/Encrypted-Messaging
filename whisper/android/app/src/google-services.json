@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1045536781651",
+    "project_id": "whisper-b1b2b",
+    "storage_bucket": "whisper-b1b2b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045536781651:android:34032b98fb0904f3a91da6",
+        "android_client_info": {
+          "package_name": "com.example.whisper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpWKHF_qByaqZHifmZHNvDM15MnZ7MiOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
