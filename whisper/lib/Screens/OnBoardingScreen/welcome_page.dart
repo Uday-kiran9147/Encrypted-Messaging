@@ -4,7 +4,7 @@ import 'package:whisper/Screens/OnBoardingScreen/onboarding1.dart';
 import 'package:whisper/Screens/OnBoardingScreen/onboarding2.dart';
 
 class WelcomePage extends StatefulWidget {
-  WelcomePage({key}) : super(key: key);
+  const WelcomePage({key}) : super(key: key);
 
   @override
   _WelcomePageState createState() => _WelcomePageState();
@@ -16,9 +16,9 @@ class _WelcomePageState extends State<WelcomePage> {
 
   final List<Widget> introWidgetsList = <Widget>[
     
-    OnboardingFirst(),
-    OnboardingSecond(),
-    OnboardingThird(),
+    const OnboardingFirst(),
+    const OnboardingSecond(),
+    const OnboardingThird(),
     
   ];
 
@@ -35,7 +35,7 @@ class _WelcomePageState extends State<WelcomePage> {
       alignment: AlignmentDirectional.bottomCenter,
       children: <Widget>[
         PageView.builder(
-          physics: ClampingScrollPhysics(),
+          physics: const ClampingScrollPhysics(),
           itemCount: introWidgetsList.length,
           onPageChanged: (int page) {
             getChangedPageAndMoveBar(page);
@@ -49,7 +49,7 @@ class _WelcomePageState extends State<WelcomePage> {
           alignment: AlignmentDirectional.topStart,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(bottom: 35),
+              margin: const EdgeInsets.only(bottom: 35),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -68,13 +68,13 @@ class _WelcomePageState extends State<WelcomePage> {
 
   Widget circleBar(bool isActive) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 150),
-      margin: EdgeInsets.symmetric(horizontal: 8),
+      duration: const Duration(milliseconds: 150),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       height: isActive ? 12 : 8,
       width: isActive ? 12 : 8,
       decoration: BoxDecoration(
           color: isActive ? Colors.white : Colors.grey,
-          borderRadius: BorderRadius.all(Radius.circular(12))),
+          borderRadius: const BorderRadius.all(Radius.circular(12))),
     );
   }
 }

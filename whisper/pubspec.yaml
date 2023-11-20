@@ -47,6 +47,8 @@ dependencies:
   firebase_core: ^2.15.1
   flutter_libphonenumber: ^2.1.5
   flutter_riverpod: ^2.3.7
+  shared_preferences: ^2.2.2
+  cryptography: ^2.7.0
 
 dev_dependencies:
   flutter_test:

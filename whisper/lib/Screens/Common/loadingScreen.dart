@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class LoadingScreen extends StatelessWidget {
@@ -9,9 +8,9 @@ class LoadingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.brown[100],
-      child: Center(
+      child: const Center(
         child: SpinKitChasingDots(
-          color: const Color.fromARGB(255, 228, 118, 155),
+          color: Color.fromARGB(255, 228, 118, 155),
           size: 50,
         ),
       ),

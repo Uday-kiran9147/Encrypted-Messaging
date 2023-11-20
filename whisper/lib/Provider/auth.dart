@@ -1,28 +1,32 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:whisper/Screens/OnBoardingScreen/welcome_page.dart';
+import '../Screens/home_screen.dart' as home;
 
 class Authentication {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   Stream<User?> get authStateChange => _auth.authStateChanges();
 
   Future<void> signInWithEmailAndPassword(
       String email, String password, BuildContext context) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (ctx) => const home.Home()));
     } on FirebaseAuthException catch (e) {
       await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-                title: Text("Error Occured"),
+                title: const Text("Error Occured"),
                 content: Text(e.toString()),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.of(ctx).pop();
                       },
-                      child: Text("OK"))
+                      child: const Text("OK"))
                 ],
               ));
     }
@@ -33,18 +37,26 @@ class Authentication {
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+      firebaseFirestore.collection('users').doc(_auth.currentUser!.uid).set({
+        'id': _auth.currentUser!.uid,
+        'email': email,
+        // 'public_key': "public_key",
+        'password': password, // Need To be changed later on
+      });
+      print("User created in Successfully");
     } on FirebaseAuthException catch (e) {
-      await showDialog(
+      await  showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-                title: Text("Error Occured"),
+                title: const Text("Error Occured"),
                 content: Text(e.toString()),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.of(ctx).pop();
                       },
-                      child: Text("OK"))
+                      child: const Text("OK"))
                 ],
               ));
     } catch (e) {
@@ -56,8 +68,10 @@ class Authentication {
     }
   }
 
-  Future<void> signOut() async {
+  Future<void> signOut(BuildContext context) async {
     await _auth.signOut();
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (ctx) => const WelcomePage()));
   }
 
   Future<void> signInWithGoogle(BuildContext context) async {
@@ -74,14 +88,14 @@ class Authentication {
       await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-                title: Text("Error Occured"),
+                title: const Text("Error Occured"),
                 content: Text(e.toString()),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.of(ctx).pop();
                       },
-                      child: Text("OK"))
+                      child: const Text("OK"))
                 ],
               ));
     } catch (e) {

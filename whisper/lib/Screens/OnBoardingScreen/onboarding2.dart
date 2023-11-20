@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class OnboardingSecond extends StatefulWidget {
-  OnboardingSecond({key}) : super(key: key);
+  const OnboardingSecond({key}) : super(key: key);
 
   @override
   _OnboardingSecondState createState() => _OnboardingSecondState();
@@ -18,9 +18,9 @@ class _OnboardingSecondState extends State<OnboardingSecond> {
       },
       child: Scaffold(
         backgroundColor:Colors.deepPurple,
-        body: Column(
+        body: ListView(
           children: <Widget>[
-            SizedBox(height: height / 7),
+            // SizedBox(height: height / 7),
             Container(
                 alignment: Alignment.center,
                 child: Column(
@@ -28,16 +28,16 @@ class _OnboardingSecondState extends State<OnboardingSecond> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       // SizedBox(height: 10),
-                      Text("Encrypting the Conversation, Empowering You\n",
-                          style: const TextStyle(
-                              color: const Color(0xfffaf5f0),
+                      const Text("Encrypting the Conversation, Empowering You\n",
+                          style: TextStyle(
+                              color: Color(0xfffaf5f0),
                               fontWeight: FontWeight.w700,
                               fontFamily: "Graphik",
                               fontStyle: FontStyle.normal,
                               fontSize: 33.8),
                           textAlign: TextAlign.center),
                       SizedBox(height: height / 12),
-                      Center(
+                      const Center(
                           child: Image(
                         image: AssetImage(
                           'assets/onboarding2.png',
@@ -45,9 +45,9 @@ class _OnboardingSecondState extends State<OnboardingSecond> {
                         width: 300,
                       )),
                       SizedBox(height: height / 10),
-                      Text("Your conversations are shielded with end-to-end encryption, ensuring utmost privacy.",
-                          style: const TextStyle(
-                              color: const Color(0xfffaf5f0),
+                      const Text("Your conversations are shielded with end-to-end encryption, ensuring utmost privacy.",
+                          style: TextStyle(
+                              color: Color(0xfffaf5f0),
                               // fontWeight: FontWeight.w700,
                               fontFamily: "Graphik",
                               fontStyle: FontStyle.normal,

@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:whisper/Provider/authprovider.dart';
-import 'package:whisper/Screens/Common/HomeScreen.dart';
-
+import 'package:whisper/Screens/home_screen.dart';
 
 enum Status {
   login,
@@ -69,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
             }
 
             if (type == Status.login) {
-              loading();
+              // loading();
               await auth
                   .signInWithEmailAndPassword(
                       _email.text, _password.text, context)
@@ -85,18 +84,18 @@ class _LoginPageState extends State<LoginPage> {
               await auth
                   .signUpWithEmailAndPassword(
                       _email.text, _password.text, context)
-                  .whenComplete(() =>
-                      auth.authStateChange.listen((event) async {
-                        if (event == null) {
-                          loading();
-                          return;
-                        } else {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) =>Home()),
-                          );
-                        }
-                      }));
+                  .whenComplete(
+                      () => auth.authStateChange.listen((event) async {
+                            if (event == null) {
+                              loading();
+                              return;
+                            } else {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Home()),
+                              );
+                            }
+                          }));
             }
           }
 
@@ -117,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: Container(
                     margin: const EdgeInsets.only(top: 48),
                     child: Column(
@@ -125,7 +124,6 @@ class _LoginPageState extends State<LoginPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Center(
-      
                             child: Image(
                           image: AssetImage("assets/onboarding1.png"),
                           height: 190,
@@ -145,9 +143,9 @@ class _LoginPageState extends State<LoginPage> {
                             enableSuggestions: true,
                             keyboardType: TextInputType.emailAddress,
                             onSaved: (value) {},
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: 'Email address',
-                              hintStyle: const TextStyle(color: Colors.black54),
+                              hintStyle: TextStyle(color: Colors.black54),
                               icon: Icon(Icons.email_outlined,
                                   color: Colors.deepPurple, size: 24),
                               alignLabelWithHint: true,
@@ -178,9 +176,9 @@ class _LoginPageState extends State<LoginPage> {
                               }
                               return null;
                             },
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: 'Password',
-                              hintStyle: const TextStyle(color: Colors.black54),
+                              hintStyle: TextStyle(color: Colors.black54),
                               icon: Icon(CupertinoIcons.lock_circle,
                                   color: Colors.deepPurple, size: 24),
                               alignLabelWithHint: true,
@@ -200,10 +198,10 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(25)),
                             child: TextFormField(
                               obscureText: true,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'Confirm password',
                                 hintStyle:
-                                    const TextStyle(color: Colors.black54),
+                                    TextStyle(color: Colors.black54),
                                 icon: Icon(CupertinoIcons.lock_circle,
                                     color: Colors.deepPurple, size: 24),
                                 alignLabelWithHint: true,
@@ -249,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25),
                                       side:
-                                          BorderSide(color: Colors.deepPurple),
+                                          const BorderSide(color: Colors.deepPurple),
                                     ),
                                     child: Text(
                                       type == Status.login
@@ -276,12 +274,12 @@ class _LoginPageState extends State<LoginPage> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25),
                                       side:
-                                          BorderSide(color: Colors.deepPurple),
+                                          const BorderSide(color: Colors.deepPurple),
                                     ),
-                                    child: Row(
+                                    child: const Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      children: const [
+                                      children: [
                                         FaIcon(FontAwesomeIcons.google),
                                         Text(
                                           ' Login with Google',
@@ -307,7 +305,7 @@ class _LoginPageState extends State<LoginPage> {
                                           ? 'Sign up now'
                                           : 'Log in',
                                       style:
-                                          TextStyle(color: Colors.deepPurple),
+                                          const TextStyle(color: Colors.deepPurple),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
                                           _switchType();
