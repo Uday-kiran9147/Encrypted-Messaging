@@ -33,7 +33,7 @@ class Authentication {
   }
 
   Future<void> signUpWithEmailAndPassword(
-      String email, String password, BuildContext context) async {
+      String email, String password, BuildContext context,List<int> private_key, String public_key) async {
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -41,7 +41,8 @@ class Authentication {
       firebaseFirestore.collection('users').doc(_auth.currentUser!.uid).set({
         'id': _auth.currentUser!.uid,
         'email': email,
-        // 'public_key': "public_key",
+        'public_key': public_key,
+        'private_key': private_key,
         'password': password, // Need To be changed later on
       });
       print("User created in Successfully");

@@ -20,8 +20,13 @@ class ChatDetailScreen extends StatefulWidget {
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final DataBaseService _dataService = DataBaseService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  String publicKeyUserA = '';
+  String publicKeyUserB = '';
+  final algorithm = X25519();
   final TextEditingController _messageController = TextEditingController();
+  List<int>? encryptedMessage = null;
+  String? decryptedMessage = null;
+  String sharedSecret = '';
 
   Future<void> sendMessage() async {
     if (_messageController.text.isNotEmpty) {
@@ -31,6 +36,50 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       _messageController.clear();
     } else {
       // print("Empty Message");
+    }
+  }
+
+
+
+  Future<void> encryptDecrypt() async {
+    final userAKeyPair = await algorithm.newKeyPair();
+    final userBKeyPair = await algorithm.newKeyPair();
+
+    final userAPublicKey = await userAKeyPair.extractPublicKey();
+    final userBPublicKey = await userBKeyPair.extractPublicKey();
+
+    final sharedSecretKeyUserA = await algorithm.sharedSecretKey(
+      keyPair: userAKeyPair,
+      remotePublicKey: userBPublicKey,
+    );
+
+    final sharedSecretKeyUserB = await algorithm.sharedSecretKey(
+      keyPair: userBKeyPair,
+      remotePublicKey: userAPublicKey,
+    );
+
+    if (sharedSecretKeyUserA == sharedSecretKeyUserB) {
+      final secretBoxAlgorithm = AesGcm.with256bits();
+      final nonce = secretBoxAlgorithm.newNonce();
+
+      final secretBox = await secretBoxAlgorithm.encrypt(
+        _messageController.text.codeUnits,
+        secretKey: sharedSecretKeyUserA,
+        nonce: nonce,
+      );
+
+      final clearText = await secretBoxAlgorithm.decrypt(
+        secretBox,
+        secretKey: sharedSecretKeyUserB,
+      );
+
+      setState(() {
+        encryptedMessage = secretBox.cipherText;
+        decryptedMessage = String.fromCharCodes(clearText);
+        // chatMessages.add('User A: ${myController.text}');
+        // chatMessages.add('User B: $decryptedMessage');
+        // myController.clear();
+      });
     }
   }
 

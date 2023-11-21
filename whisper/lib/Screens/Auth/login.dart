@@ -1,3 +1,4 @@
+import 'package:cryptography/cryptography.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,25 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  String publicKeyUserA = '';
+  List<int> privateKeyUserA = [];
+  final algorithm = X25519();
+  String sharedSecret = '';
+  Future<(String, List<int>)> performKeyExchange() async {
+    final userAKeyPair = await algorithm.newKeyPair();
+
+    final userAPublicKey = await userAKeyPair.extractPublicKey();
+    final result = await userAKeyPair.extractPrivateKeyBytes();
+    // if (privateKeyUserA != null) {
+      publicKeyUserA = '${userAPublicKey.bytes}';
+      privateKeyUserA = result;
+      return (publicKeyUserA, privateKeyUserA);
+    // }
+    // else{
+    // return ("", <int>[]);
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,21 +101,31 @@ class _LoginPageState extends State<LoginPage> {
                           }));
             } else {
               loading();
-              await auth
-                  .signUpWithEmailAndPassword(
-                      _email.text, _password.text, context)
-                  .whenComplete(
-                      () => auth.authStateChange.listen((event) async {
-                            if (event == null) {
-                              loading();
-                              return;
-                            } else {
+              await performKeyExchange().then((value) async {
+                if (value.$1!.isNotEmpty && value.$2!.isNotEmpty) {
+                  print(privateKeyUserA);
+                  print(publicKeyUserA);
+                  await auth
+                      .signUpWithEmailAndPassword(_email.text, _password.text,
+                          context, value.$2, value.$1)
+                      .whenComplete(() =>
+                              // () => auth.authStateChange.listen((event) async {
+                              //       if (event == null) {
+                              //         loading();
+                              //         return;
+                              //       } else {
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => const Home()),
-                              );
-                            }
-                          }));
+                                MaterialPageRoute(
+                                    builder: (context) => const Home()),
+                              )
+                          // }
+                          );
+                } else {
+                  print(privateKeyUserA);
+                  print(publicKeyUserA);
+                }
+              });
             }
           }
 
@@ -200,8 +230,7 @@ class _LoginPageState extends State<LoginPage> {
                               obscureText: true,
                               decoration: const InputDecoration(
                                 hintText: 'Confirm password',
-                                hintStyle:
-                                    TextStyle(color: Colors.black54),
+                                hintStyle: TextStyle(color: Colors.black54),
                                 icon: Icon(CupertinoIcons.lock_circle,
                                     color: Colors.deepPurple, size: 24),
                                 alignLabelWithHint: true,
@@ -246,8 +275,8 @@ class _LoginPageState extends State<LoginPage> {
                                     padding: const EdgeInsets.all(18),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25),
-                                      side:
-                                          const BorderSide(color: Colors.deepPurple),
+                                      side: const BorderSide(
+                                          color: Colors.deepPurple),
                                     ),
                                     child: Text(
                                       type == Status.login
@@ -273,8 +302,8 @@ class _LoginPageState extends State<LoginPage> {
                                     padding: const EdgeInsets.all(18),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25),
-                                      side:
-                                          const BorderSide(color: Colors.deepPurple),
+                                      side: const BorderSide(
+                                          color: Colors.deepPurple),
                                     ),
                                     child: const Row(
                                       mainAxisAlignment:
@@ -304,8 +333,8 @@ class _LoginPageState extends State<LoginPage> {
                                       text: type == Status.login
                                           ? 'Sign up now'
                                           : 'Log in',
-                                      style:
-                                          const TextStyle(color: Colors.deepPurple),
+                                      style: const TextStyle(
+                                          color: Colors.deepPurple),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
                                           _switchType();
