@@ -64,9 +64,9 @@ class _LoginPageState extends State<LoginPage> {
     final userAPublicKey = await userAKeyPair.extractPublicKey();
     final result = await userAKeyPair.extractPrivateKeyBytes();
     // if (privateKeyUserA != null) {
-      publicKeyUserA = '${userAPublicKey.bytes}';
-      privateKeyUserA = result;
-      return (publicKeyUserA, privateKeyUserA);
+    publicKeyUserA = '${userAPublicKey.bytes}';
+    privateKeyUserA = result;
+    return (publicKeyUserA, privateKeyUserA);
     // }
     // else{
     // return ("", <int>[]);

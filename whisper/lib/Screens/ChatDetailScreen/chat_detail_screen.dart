@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:whisper/Services/DataBaseService/database_services.dart';
@@ -20,7 +21,49 @@ class ChatDetailScreen extends StatefulWidget {
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final DataBaseService _dataService = DataBaseService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  String publicKeyUserA = '';
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
+  Future<String> getRandonUserPublicKey() async {
+    DocumentSnapshot userSnapshot = await _firebaseFirestore
+        .collection('users')
+        .doc(widget.randomUserId)
+        .get();
+
+    final String public = userSnapshot['public_key'];
+    randomUserPublicKey = public;
+    return public;
+  }
+
+  Future<List> getCurrentUserPrivateKey() async {
+    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(_auth.currentUser!.uid)
+        .get();
+    final List privateKey = userSnapshot['private_key'];
+    currentUserPrivateKey = privateKey.cast<int>().toList();
+    return privateKey;
+  }
+
+  @override
+  void initState() {
+    getKeys();
+    super.initState();
+  }
+
+  getKeys() async {
+    await getRandonUserPublicKey().then((value) {
+      randomUserPublicKey = value;
+      print("Random user Public\n" + randomUserPublicKey);
+    });
+    await getCurrentUserPrivateKey().then((List value) {
+      currentUserPrivateKey = value.cast<int>().toList();
+      print("private key");
+      print(currentUserPrivateKey);
+    });
+  }
+
+  String randomUserPublicKey = '';
+  List currentUserPrivateKey = [];
   String publicKeyUserB = '';
   final algorithm = X25519();
   final TextEditingController _messageController = TextEditingController();
@@ -32,14 +75,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     if (_messageController.text.isNotEmpty) {
       await _dataService.sendMessage(
           widget.randomUserId, _messageController.text);
-      // print(_messageController.text);
+      print(_messageController.text);
       _messageController.clear();
     } else {
-      // print("Empty Message");
+      print("Empty Message");
     }
   }
-
-
 
   Future<void> encryptDecrypt() async {
     final userAKeyPair = await algorithm.newKeyPair();
