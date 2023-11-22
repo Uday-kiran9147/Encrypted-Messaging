@@ -9,8 +9,8 @@ class DataBaseService {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   // SEND message
-  Future<void> sendMessage(String receiverId, messageText) async {
-
+  Future<void> sendMessage(String receiverId, List<int> messageText) async {
+    print('database');
     // getcurrent user info
     final String currentUserId = _firebaseAuth.currentUser!.uid;
     final String currentUserEmail = _firebaseAuth.currentUser!.email!;
@@ -21,7 +21,7 @@ class DataBaseService {
         senderId: currentUserId,
         senderEmali: currentUserEmail,
         receiverId: receiverId,
-        message: messageText,
+        message: messageText.cast<int>().toList(),
         timeStamp: timestamp);
 
     List<String> userids = [currentUserId, receiverId];
