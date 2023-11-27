@@ -96,7 +96,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         print(encryptedMessage);
         encryptedMessage = null;
         _messageController.clear();
-        print('cleared');
+        print('cleared msg controller');
         print(_messageController.text);
         print(encryptedMessage);
       }).catchError((e) {
@@ -123,10 +123,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       keyPair: CurruserKeyPair,
       remotePublicKey: randomuserPublickey,
     );
-setState(() {
-          sharedSecret = sharedSecretKeyUserA;
-
-});
+    setState(() {
+      sharedSecret = sharedSecretKeyUserA;
+    });
 
     final sharedSecretKeyUserB = await algorithm.sharedSecretKey(
       keyPair: randomBKeyPair,
@@ -186,21 +185,24 @@ setState(() {
                       return const CircularProgressIndicator();
                     }
                     if (snapshot.hasData) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return MessageWidget(
-                            messages: Message.fromMap(snapshot.data!.docs[index]
-                                .data() as Map<String, dynamic>),
-                            sharedSecretKeyUserA: sharedSecret!,
-                          );
-                        },
-                      );
+                      if (sharedSecret != null) {
+                        return ListView.builder(
+                          itemCount: snapshot.data!.docs.length,
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(top: 10, bottom: 10),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return MessageWidget(
+                              messages: Message.fromMap(
+                                  snapshot.data!.docs[index].data()
+                                      as Map<String, dynamic>),
+                              sharedSecretKeyUserA: sharedSecret!,
+                            );
+                          },
+                        );
+                      }
                     }
-                    return Container();
+                    return const Placeholder();
                   }),
               const SizedBox(
                 // Try to match height and below container height
@@ -308,10 +310,14 @@ setState(() {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      emali,
-                      style: const TextStyle(
-                          fontSize: 6, fontWeight: FontWeight.w600),
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        emali,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.w600),
+                      ),
                     ),
                     const SizedBox(
                       height: 6,

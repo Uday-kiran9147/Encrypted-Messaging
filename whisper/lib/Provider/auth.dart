@@ -12,9 +12,10 @@ class Authentication {
   Future<void> signInWithEmailAndPassword(
       String email, String password, BuildContext context) async {
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (ctx) => const home.Home()));
+      await _auth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .whenComplete(() => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (ctx) => const home.Home())));
     } on FirebaseAuthException catch (e) {
       await showDialog(
           context: context,
@@ -32,8 +33,8 @@ class Authentication {
     }
   }
 
-  Future<void> signUpWithEmailAndPassword(
-      String email, String password, BuildContext context,List<int> private_key, String public_key) async {
+  Future<void> signUpWithEmailAndPassword(String email, String password,
+      BuildContext context, List<int> private_key, String public_key) async {
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -47,7 +48,7 @@ class Authentication {
       });
       print("User created in Successfully");
     } on FirebaseAuthException catch (e) {
-      await  showDialog(
+      await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
                 title: const Text("Error Occured"),
@@ -71,8 +72,8 @@ class Authentication {
 
   Future<void> signOut(BuildContext context) async {
     await _auth.signOut();
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (ctx) => const WelcomePage()));
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (ctx) => const WelcomePage()));
   }
 
   Future<void> signInWithGoogle(BuildContext context) async {
