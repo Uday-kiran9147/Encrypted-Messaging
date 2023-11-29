@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 
 import '../ChatDetailScreen/chat_detail_screen.dart';
 
-class ConversationList extends StatefulWidget {
+class ConversationListTile extends StatefulWidget {
   DocumentSnapshot documentSnapshot;
 
-  ConversationList({
+  ConversationListTile({
     super.key,
     required this.documentSnapshot,
   });
   @override
-  _ConversationListState createState() => _ConversationListState();
+  _ConversationListTileState createState() => _ConversationListTileState();
 }
 
-class _ConversationListState extends State<ConversationList> {
+class _ConversationListTileState extends State<ConversationListTile> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -44,7 +44,8 @@ class _ConversationListState extends State<ConversationList> {
               child: Row(
                 children: <Widget>[
                   const CircleAvatar(
-                    // backgroundImage: NetworkImage(widget.imageUrl),
+                    backgroundImage: NetworkImage(
+                        'https://www.w3schools.com/howto/img_avatar.png'),
                     maxRadius: 30,
                   ),
                   const SizedBox(
@@ -56,9 +57,11 @@ class _ConversationListState extends State<ConversationList> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(
-                            widget.documentSnapshot['email'],
-                            style: const TextStyle(fontSize: 16),
+                          FittedBox(fit: BoxFit.contain,
+                            child: Text(
+                              widget.documentSnapshot['email'],
+                              style: const TextStyle(fontSize: 16),
+                            ),
                           ),
                           const SizedBox(
                             height: 6,

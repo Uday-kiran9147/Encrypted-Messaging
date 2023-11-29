@@ -8,12 +8,14 @@ class Message {
   final String senderEmali;
   final String receiverId;
   final String message;
+  final String key;
   final Timestamp timeStamp;
   Message({
     required this.senderId,
     required this.senderEmali,
     required this.receiverId,
     required this.message,
+    required this.key,
     required this.timeStamp,
   });
 
@@ -23,6 +25,7 @@ class Message {
       'senderEmali': senderEmali,
       'receiverId': receiverId,
       'message': message,
+      'key': key,
       'timeStamp': timeStamp,
     };
   }
@@ -33,6 +36,7 @@ class Message {
       senderEmali: (map["senderEmali"] ?? '') as String,
       receiverId: (map["receiverId"] ?? '') as String,
       message: map['message'],
+      key: map['key']??'',
       timeStamp: map["timeStamp"],
     );
   }

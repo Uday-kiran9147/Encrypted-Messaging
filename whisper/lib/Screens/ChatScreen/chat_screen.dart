@@ -27,26 +27,28 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple[50],
       body: SafeArea(
-        child: Column(
+        child: ListView(
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 12.0, right: 12.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Column(
-                    children: [
-                      const Text(
-                        "Chats",
-                        style: TextStyle(
-                            fontSize: 32, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        FirebaseAuth.instance.currentUser!.email!,
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(left:8.0),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Chats",
+                          style: TextStyle(
+                              fontSize: 32, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          FirebaseAuth.instance.currentUser!.email!,
+                        ),
+                      ],
+                    ),
                   ),
                   FittedBox(
                       child: TextButton(
@@ -94,13 +96,13 @@ class _ChatScreenState extends State<ChatScreen> {
                     itemCount: snapshot.data!.docs.length,
                     shrinkWrap: true,
                     padding: const EdgeInsets.only(top: 16),
-                    physics: const NeverScrollableScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
                       if (snapshot.data!.docs[index]['id'] ==
                           FirebaseAuth.instance.currentUser!.uid) {
                         return Container();
                       } else {
-                        return ConversationList(
+                        return ConversationListTile(
                             documentSnapshot: snapshot.data!.docs[index]);
                       }
                     },

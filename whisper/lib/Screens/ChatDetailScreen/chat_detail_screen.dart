@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:whisper/Encryption/encryption.dart';
 import 'package:whisper/Services/DataBaseService/database_services.dart';
 import 'package:cryptography/cryptography.dart';
 import '../../Models/message.dart';
+import 'dart:math';
 
 class ChatDetailScreen extends StatefulWidget {
   final String randomUserId;
@@ -22,14 +24,20 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   final TextEditingController _messageController = TextEditingController();
 
+  SimpleEncryption msg = SimpleEncryption();
+
   Future<void> sendMessage() async {
     if (_messageController.text.isNotEmpty) {
+      final keyLength = Random().nextInt(8) + 8; // Value is >= 8 and < 16;
+      final String key = SimpleEncryption.generateRandomHexKey(keyLength);
+      final encryptedMessage =
+          msg.encrypt(_messageController.text, key).toString();
       await _dataService.sendMessage(
-          widget.randomUserId, _messageController.text);
+          widget.randomUserId, encryptedMessage, key);
       // print(_messageController.text);
       _messageController.clear();
     } else {
-      // print("Empty Message");
+      print("Empty Message");
     }
   }
 
@@ -57,6 +65,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     }
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
+                    }
+                    if(snapshot.data!.docs.isEmpty){
+                      return const Center(child: Padding(
+                        padding: EdgeInsets.only(top:20.0),
+                        child: Text("No messages yet",style: TextStyle(color: Colors.purple),),
+                      ),);
                     }
                     return ListView.builder(
                       itemCount: snapshot.data!.docs.length,
@@ -90,8 +104,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     child: Container(
                       height: 30,
                       width: 30,
-                      decoration: BoxDecoration(
-                        color: Colors.lightBlue,
+                      decoration: BoxDecoration(color: Colors.deepPurple,
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: const Icon(
@@ -112,15 +125,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           filled: true,
                           hintText: "Write message...",
                           hintStyle: TextStyle(color: Colors.black54),
-                          border: InputBorder.none),
+                          border: UnderlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),))
                     ),
                   ),
                   const SizedBox(
                     width: 15,
                   ),
-                  FloatingActionButton(
+                  FloatingActionButton(backgroundColor: Colors.deepPurple,
                     onPressed: sendMessage,
-                    backgroundColor: Colors.blue,
                     elevation: 0,
                     child: const Icon(
                       Icons.send,
@@ -204,13 +218,15 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 }
 
 class MessageWidget extends StatelessWidget {
-  const MessageWidget({
+   MessageWidget({
     super.key,
     required this.messages,
   });
 
   final Message messages;
 
+  SimpleEncryption encryption = SimpleEncryption();
+  
   @override
   Widget build(BuildContext context) {
     BorderRadius borderRadius =
@@ -235,11 +251,11 @@ class MessageWidget extends StatelessWidget {
               color:
                   (messages.senderId == FirebaseAuth.instance.currentUser!.uid
                       ? Colors.deepPurple[100]
-                      : Colors.grey.shade200),
+                      : Colors.grey.shade300),
               borderRadius: borderRadius),
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(13),
           child: Text(
-            messages.message,
+            encryption.decryptMessage(messages.message, messages.key).toString(),
             style: const TextStyle(fontSize: 15),
           ),
         ),

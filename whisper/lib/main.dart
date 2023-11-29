@@ -22,14 +22,19 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final initialize = ref.watch(firebaseInitializerProvider);
     return MaterialApp(
+      title: 'Whisper',
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+        scaffoldBackgroundColor: Colors.purple[50],
+      ),
       debugShowCheckedModeBanner: false,
       home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return WelcomePage();
+              return const WelcomePage();
             }
-            return Home();
+            return const Home();
           }),
       // home: initialize.when(
       //   data: (data) {

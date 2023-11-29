@@ -9,7 +9,7 @@ class DataBaseService {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   // SEND message
-  Future<void> sendMessage(String receiverId, String messageText) async {
+  Future<void> sendMessage(String receiverId, String messageText, String key) async {
     print('database');
     // getcurrent user info
     final String currentUserId = _firebaseAuth.currentUser!.uid;
@@ -22,6 +22,7 @@ class DataBaseService {
         senderEmali: currentUserEmail,
         receiverId: receiverId,
         message: messageText,
+        key: key,
         timeStamp: timestamp);
 
     List<String> userids = [currentUserId, receiverId];
@@ -31,7 +32,7 @@ class DataBaseService {
     String chatRoomId = userids.join("_");
     // add new message to database
     await _firebaseFirestore
-        .collection('ChatRooms')
+        .collection('ChatRooms_2')
         .doc(chatRoomId)
         .collection('Messages')
         .add(message.toMap());
@@ -43,7 +44,7 @@ class DataBaseService {
     userids.sort();
     String chatRoomId = userids.join("_");
     return _firebaseFirestore
-        .collection('ChatRooms')
+        .collection('ChatRooms_2')
         .doc(chatRoomId)
         .collection('Messages')
         .orderBy('timeStamp', descending: false)
