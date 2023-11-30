@@ -25,7 +25,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
-  static List<Widget> bottomlist = <Widget>[const ChatScreen(), const ProfileScreen()];
+  static List<Widget> bottomlist = <Widget>[const ChatScreen(),  ProfileScreen()];
 
   void _onItemTapped(int index) {
     setState(() {
