@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:whisper/Provider/auth.dart';
 import 'package:whisper/Screens/ChatScreen/chat_tile.dart';
 
@@ -51,7 +52,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   FittedBox(
                       child: TextButton(
                           onPressed: () {
-                            Authentication().signOut(context);
+                           Provider.of<Auth>(context, listen: false)
+                                .logout();
                           },
                           child: const Text("Logout")))
                 ],
