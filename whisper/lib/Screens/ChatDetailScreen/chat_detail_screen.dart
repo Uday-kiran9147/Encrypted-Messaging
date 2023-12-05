@@ -1,7 +1,10 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:whisper/Encryption/encryption.dart';
 import 'package:whisper/Services/DataBaseService/database_services.dart';
-import 'package:cryptography/cryptography.dart';
+
 import '../../Models/message.dart';
 
 class ChatDetailScreen extends StatefulWidget {
@@ -19,18 +22,63 @@ class ChatDetailScreen extends StatefulWidget {
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final DataBaseService _dataService = DataBaseService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  EncryptionService em = EncryptionService();
 
   final TextEditingController _messageController = TextEditingController();
 
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
+  Keys currentUserKey = Keys(0, 0);
+  Keys randomUserKey = Keys(0, 0);
+  Future<void> getRandonUserPublicKey() async {
+    DocumentSnapshot userSnapshot = await _firebaseFirestore
+        .collection('users')
+        .doc(widget.randomUserId)
+        .get();
+
+    final int randomUserPublicKEY = userSnapshot['public_key'];
+
+    final int randomUserprivateKEY = userSnapshot['private_key'];
+
+    randomUserKey.public = randomUserPublicKEY;
+    randomUserKey.private = randomUserprivateKEY;
+    
+    print(randomUserKey.toString());
+  }
+
+  Future<void> getCurrentUserPrivateKey() async {
+    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(_auth.currentUser!.uid)
+        .get();
+    final int currentUserPrivateKEY = userSnapshot['private_key'];
+    final int currentUserPublicKEY = userSnapshot['public_key'];
+    currentUserKey.private = currentUserPrivateKEY;
+    currentUserKey.public = currentUserPublicKEY;
+
+    // print(currentUserKey.toString());
+  }
+
   Future<void> sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _dataService.sendMessage(
-          widget.randomUserId, _messageController.text);
-      // print(_messageController.text);
+      List<int> encryptedValues = em.encrypt(_messageController.text,
+          (currentUserKey.public + randomUserKey.public).toString());
+      await _dataService.sendMessage(widget.randomUserId, encryptedValues);
       _messageController.clear();
     } else {
       // print("Empty Message");
     }
+  }
+
+  @override
+  void initState() {
+    getKeys();
+    super.initState();
+  }
+
+  getKeys() async {
+    await getRandonUserPublicKey();
+    await getCurrentUserPrivateKey();
   }
 
   @override
@@ -41,6 +89,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _messageController.clear();
     return Scaffold(
       appBar: _buildAppBar(context, widget.randomUserEmail),
       body: Stack(
@@ -65,8 +114,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return MessageWidget(
-                            messages: Message.fromMap(snapshot.data!.docs[index]
-                                .data() as Map<String, dynamic>));
+                          messages: Message.fromMap(snapshot.data!.docs[index]
+                              .data() as Map<String, dynamic>),
+                          currentUserKeys: currentUserKey,
+                          randomUserKeys: randomUserKey,
+                        );
                       },
                     );
                   }),
@@ -84,6 +136,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               width: double.infinity,
               color: Colors.deepPurple[50],
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {},
@@ -192,7 +245,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ),
               ),
               const Icon(
-                Icons.settings,
+                Icons.more_vert,
                 color: Colors.black54,
               ),
             ],
@@ -204,15 +257,22 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 }
 
 class MessageWidget extends StatelessWidget {
-  const MessageWidget({
-    super.key,
+  MessageWidget({
+    Key? key,
     required this.messages,
-  });
+    required this.currentUserKeys,
+    required this.randomUserKeys,
+  }) : super(key: key);
 
   final Message messages;
+  final Keys currentUserKeys;
+  final Keys randomUserKeys;
+  EncryptionService em = EncryptionService();
 
   @override
   Widget build(BuildContext context) {
+    String decryptedString = em.decryptMessage(messages.message.toList(),
+        (currentUserKeys.public + randomUserKeys.public).toString());
     BorderRadius borderRadius =
         messages.senderId == FirebaseAuth.instance.currentUser!.uid
             ? const BorderRadius.only(
@@ -239,7 +299,7 @@ class MessageWidget extends StatelessWidget {
               borderRadius: borderRadius),
           padding: const EdgeInsets.all(16),
           child: Text(
-            messages.message,
+            decryptedString,
             style: const TextStyle(fontSize: 15),
           ),
         ),

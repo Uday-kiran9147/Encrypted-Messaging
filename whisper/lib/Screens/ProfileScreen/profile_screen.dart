@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _bioController = TextEditingController();
-  TextEditingController _aboutController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _aboutController = TextEditingController();
 
   // Replace these with your actual user data
   String username = "Mahi";
@@ -38,7 +40,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _saveProfileData() async {
-    if (_prefs == null) return; // Add null check here
     _prefs.setString('name', _nameController.text);
     _prefs.setString('bio', _bioController.text);
     _prefs.setString('about', _aboutController.text);
@@ -49,23 +50,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
-        title: Center(child: Text('Profile')),
+        title: const Center(child: Text('Profile')),
         
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 10,),
+            const SizedBox(height: 10,),
             CircleAvatar(
               radius: 70,
               backgroundImage: NetworkImage(imageUrl),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ListTile(
-              leading: Icon(Icons.person_3_rounded),
-              title: Text(
+              leading: const Icon(Icons.person_3_rounded),
+              title: const Text(
                 'Name',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -74,16 +75,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(fontSize: 16, color: Colors.grey[800]),
               ),
               trailing: IconButton(
-                icon: Icon(Icons.edit),
+                icon: const Icon(Icons.edit),
                 onPressed: () {
                   _showEditDialog(context, 'Edit Name', _nameController);
                 },
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ListTile(
-              leading: Icon(Icons.favorite),
-              title: Text(
+              leading: const Icon(Icons.favorite),
+              title: const Text(
                 'Bio',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -92,16 +93,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(fontSize: 16, color: Colors.grey[800]),
               ),
               trailing: IconButton(
-                icon: Icon(Icons.edit),
+                icon: const Icon(Icons.edit),
                 onPressed: () {
                   _showEditDialog(context, 'Edit Bio', _bioController);
                 },
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ListTile(
-              leading: Icon(Icons.info),
-              title: Text(
+              leading: const Icon(Icons.info),
+              title: const Text(
                 'About',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -110,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(fontSize: 16, color: Colors.grey[800]),
               ),
               trailing: IconButton(
-                icon: Icon(Icons.edit),
+                icon: const Icon(Icons.edit),
                 onPressed: () {
                   _showEditDialog(context, 'Edit About', _aboutController);
                 },
@@ -134,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           child: Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -144,20 +145,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextField(
                   controller: controller,
                   decoration: InputDecoration(
                     hintText: 'Enter $title',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -166,11 +167,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.of(context).pop();
                       },
                       style: TextButton.styleFrom(
-                        primary: Colors.grey,
+                        foregroundColor: Colors.grey,
                       ),
-                      child: Text('Cancel'),
+                      child: const Text('Cancel'),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
@@ -180,9 +181,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.of(context).pop();
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.deepPurple,
+                        backgroundColor: Colors.deepPurple,
                       ),
-                      child: Text('Save'),
+                      child: const Text('Save'),
                     ),
                   ],
                 ),
@@ -207,6 +208,6 @@ void main() {
       primarySwatch: Colors.deepPurple,
       visualDensity: VisualDensity.adaptivePlatformDensity,
     ),
-    home: ProfileScreen(),
+    home: const ProfileScreen(),
   ));
 }

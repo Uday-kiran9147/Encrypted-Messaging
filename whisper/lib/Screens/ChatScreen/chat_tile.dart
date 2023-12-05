@@ -23,7 +23,7 @@ class _ConversationListState extends State<ConversationList> {
             context,
             MaterialPageRoute(
                 builder: (context) => ChatDetailScreen(
-                      randomUserEmail: widget.documentSnapshot['email'],
+                      randomUserEmail: widget.documentSnapshot['phoneNumber'],
                       randomUserId: widget.documentSnapshot['id'],
                     )));
       },
@@ -57,7 +57,7 @@ class _ConversationListState extends State<ConversationList> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.documentSnapshot['email'],
+                            widget.documentSnapshot['phoneNumber'],
                             style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(

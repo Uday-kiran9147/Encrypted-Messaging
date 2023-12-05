@@ -1,7 +1,12 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:whisper/Models/user.dart';
 import 'package:whisper/Screens/Auth/otp.dart';
-import 'package:whisper/Screens/Common/landingpage.dart';
+import 'package:whisper/Services/DataBaseService/database_services.dart';
+
 
 class Auth with ChangeNotifier {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -14,7 +19,7 @@ class Auth with ChangeNotifier {
 
   void _handleError(e) {}
   Future<void> getFirebaseUser() async {
-    this.firebaseUser = FirebaseAuth.instance.currentUser!;
+    firebaseUser = FirebaseAuth.instance.currentUser!;
   }
 
   static bool get isAuth {
@@ -34,19 +39,36 @@ class Auth with ChangeNotifier {
     int flag = 0;
     try {
       await FirebaseAuth.instance
-          .signInWithCredential(this._phoneAuthCredential!)
-          .then((UserCredential authRes) {
-        firebaseUser = authRes.user!;
-        // // print(firebaseUser.toString());
+          .signInWithCredential(_phoneAuthCredential!)
+          .then((UserCredential authRes) async {
+        // if (authRes.user == null) {
+        var isuser = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(Auth.uid)
+            .get();
+        if (isuser.exists == false) {// if user is not registered
+          int privateKEY = Random().nextInt(5) + 100;
+          int publicKEY = privateKEY * privateKEY;
+          firebaseUser = authRes.user!;
+          await DataBaseService().registerUserDetails(AppUser(
+              id: firebaseUser!.uid,
+              name: firebaseUser!.phoneNumber!,
+              phoneNumber: firebaseUser!.phoneNumber!,
+              private_key: privateKEY,
+              public_key: publicKEY));
+          // }
+          // print(firebaseUser.toString());
+        }
       }).catchError((e) {
         flag = 1;
         _handleError(e);
         // // print("handle error in login1");
       });
-      if (flag == 0)
+      if (flag == 0) {
         return true;
-      else
+      } else {
         return false;
+      }
     } catch (e) {
       _handleError(e);
       return false;
@@ -64,41 +86,47 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> submitPhoneNumber(String phone, context) async {
-    String phoneNumber = "+91 " + phone.toString().trim();
-    // print(phoneNumber);
-
-    void verificationCompleted(AuthCredential phoneAuthCredential) {
-      this._phoneAuthCredential = phoneAuthCredential;
-    }
-
-    void verificationFailed(FirebaseAuthException error) {
-      // print("handle error in otp verification");
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LandingPage()));
-      _handleError(error);
-    }
-
-    void codeSent(String verificationId, code) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MyOtp(phone)));
-      this._verificationId = verificationId;
-      this._code = code;
-    }
-
-    void codeAutoRetrievalTimeout(String verificationId) {}
-
+    String phoneNumber = "+91${phone.toString().trim()}";
+    print(phoneNumber);
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
-      timeout: Duration(milliseconds: 10000),
-      verificationCompleted: verificationCompleted,
-      verificationFailed: verificationFailed,
-      codeSent: codeSent,
-      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
+      timeout: const Duration(milliseconds: 10000),
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        _phoneAuthCredential = credential;
+        // Verification is complete, handle authenticated user.
+        // You can navigate to a new screen or perform any other action.
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        // Handle verification failure, e.g., display an error message.
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message!),
+          ),
+        );
+        print('Verification failed: ${e.message}');
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        _verificationId = verificationId;
+        _code = resendToken;
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyOtp(phoneNumber),
+            ));
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        _verificationId = verificationId;
+      },
+      // codeSent: codeSent,
+      // codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
     );
+    print("otp sent");
   }
 
   Future<bool> submitOTP(String otp) async {
     String smsCode = otp.toString().trim();
-    this._phoneAuthCredential = PhoneAuthProvider.credential(
+    _phoneAuthCredential = PhoneAuthProvider.credential(
         verificationId: _verificationId!, smsCode: smsCode);
     bool islogin = await login();
 

@@ -11,7 +11,7 @@ import 'package:whisper/Screens/Common/landingpage.dart';
 
 class MyOtp extends StatefulWidget {
   String phone;
-  MyOtp(this.phone);
+  MyOtp(this.phone, {super.key});
 
   @override
   State<MyOtp> createState() => _MyOtpState();
@@ -31,7 +31,7 @@ class _MyOtpState extends State<MyOtp> {
   }
 
   void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_seconds == 0) {
         _timer.cancel();
       } else {
@@ -48,6 +48,7 @@ class _MyOtpState extends State<MyOtp> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
@@ -55,26 +56,27 @@ class _MyOtpState extends State<MyOtp> {
       },
       child: Scaffold(
         body: Container(
-          margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+          margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
           alignment: Alignment.center,
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Text(
+                const Text(
                   "Verification Code",
                   style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text("Enter the OTP sent to ${widget.phone}"),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 OtpTextField(
                   numberOfFields: 6,
-                  borderColor: Color(0xFF512DA8),
+                  borderColor: const Color(0xFF512DA8),
                   showFieldAsBox: true,
                   onCodeChanged: (String code) {
                     code1 = code;
                   },
                   onSubmit: (String verificationCode) async {
+                    final provider = Provider.of<Auth>(context, listen: false);
                     islogintrue =
                         await Provider.of<Auth>(context, listen: false)
                             .submitOTP(verificationCode);
@@ -85,14 +87,14 @@ class _MyOtpState extends State<MyOtp> {
                         .collection('users')
                         .doc(Auth.uid)
                         .get();
-            
 
                     if (islogintrue == true) {
                       if (isuser.exists) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ChatScreen(),
-                        ));
-                      } else {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const ChatScreen(),
+                      ));
+                      }
+                       else {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const LandingPage(),
@@ -108,10 +110,10 @@ class _MyOtpState extends State<MyOtp> {
                     }
                   },
                 ),
-                SizedBox(height: 60),
+                const SizedBox(height: 60),
                 Text("Resend in 00:${_seconds.toString().padLeft(2, '0')}sec"),
-                SizedBox(height: 40),
-                Row(
+                const SizedBox(height: 40),
+                const Row(
                   children: [
                     Icon(
                       Icons.check_box,
@@ -123,7 +125,7 @@ class _MyOtpState extends State<MyOtp> {
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
               ],
             ),
           ),
