@@ -1,42 +1,90 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:whisper/Screens/OnBoardingScreen/welcome_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:whisper/Screens/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:whisper/Screens/Auth/login.dart';
+import 'package:whisper/Screens/ChatScreen/chat_screen.dart';
+import 'package:whisper/Screens/Common/splashScreen.dart';
+import 'Provider/auth.dart';
+import 'Screens/OnBoardingScreen/welcome_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main()async {
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(MyApp());
 }
 
-final firebaseInitializerProvider = FutureProvider<FirebaseApp>((ref) async {
-  return await Firebase.initializeApp();
-});
-
-class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
-
+class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final initialize = ref.watch(firebaseInitializerProvider);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return WelcomePage();
-            }
-            return Home();
-          }),
-      // home: initialize.when(
-      //   data: (data) {
-      //     return LoginPage();
-      //   },
-      // error: (error, stackTrace) => ErrorScreen(error, stackTrace),
-      //   loading: () => LoadingScreen(),)
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Init.instance.initialize(context),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return MaterialApp(home: SplashScreen());
+        } else {
+          return MultiProvider(
+            providers: [
+           
+              ChangeNotifierProvider<Auth>(
+                create: (_) => Auth(),
+              ),
+             
+            ],
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Whisper',
+              theme: ThemeData(
+                primaryColor: Colors.pinkAccent,
+              ),
+              home: getHome(snapshot.data),
+            ),
+          );
+        }
+      },
     );
   }
+
+  Widget getHome(int authLevel) {
+    switch (authLevel) {
+      case -1:
+        return Login();
+      // break;
+      case 0:
+        return WelcomePage();
+      // break;
+      case 1:
+        return ChatScreen();
+      // break;
+      default:
+        return Center(child: Text('Something Went wrong : ((((('));
+    }
+  }
 }
+
+class Init {
+  Init._();
+  static final instance = Init._();
+
+  Future<int?> initialize(BuildContext context) async {
+    await Firebase.initializeApp();
+    if (!Auth.isAuth) {
+           return -1;
+       } else {
+      Auth.setUid();
+      var userdocumentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(Auth.uid)
+          .get();
+     
+      if (userdocumentSnapshot.exists) {
+        return 1;
+      } else {
+        return 0;
+      }
+      }
+    }
+
+  }
+

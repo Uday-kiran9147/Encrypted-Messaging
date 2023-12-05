@@ -46,9 +46,12 @@ dependencies:
   firebase_auth: ^4.8.0
   firebase_core: ^2.15.1
   flutter_libphonenumber: ^2.1.5
-  flutter_riverpod: ^2.3.7
   shared_preferences: ^2.2.2
   cryptography: ^2.7.0
+  flutter_svg: ^2.0.4
+  provider: ^6.0.5
+  flutter_chat_ui: ^1.6.6
+  permission_handler: ^10.2.0
   
 
 dev_dependencies:

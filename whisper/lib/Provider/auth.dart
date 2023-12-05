@@ -1,111 +1,111 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:whisper/Screens/OnBoardingScreen/welcome_page.dart';
-import '../Screens/home_screen.dart' as home;
+import 'package:whisper/Screens/Auth/otp.dart';
+import 'package:whisper/Screens/Common/landingpage.dart';
 
-class Authentication {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  Stream<User?> get authStateChange => _auth.authStateChanges();
+class Auth with ChangeNotifier {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  User? firebaseUser;
+  static bool didSighOut = false;
+  static String? uid;
+  AuthCredential? _phoneAuthCredential;
+  String? _verificationId;
+  int? _code;
 
-  Future<void> signInWithEmailAndPassword(
-      String email, String password, BuildContext context) async {
-    try {
-      await _auth
-          .signInWithEmailAndPassword(email: email, password: password)
-          .whenComplete(() => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (ctx) => const home.Home())));
-    } on FirebaseAuthException catch (e) {
-      await showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                title: const Text("Error Occured"),
-                content: Text(e.toString()),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop();
-                      },
-                      child: const Text("OK"))
-                ],
-              ));
-    }
+  void _handleError(e) {}
+  Future<void> getFirebaseUser() async {
+    this.firebaseUser = FirebaseAuth.instance.currentUser!;
   }
 
-  Future<void> signUpWithEmailAndPassword(String email, String password,
-      BuildContext context, List<int> private_key, String public_key) async {
+  static bool get isAuth {
+    User? user = FirebaseAuth.instance.currentUser;
+    return user == null ? false : true;
+  }
+
+  static void userPhoneNumber() {
+    var phoneNumberUser = FirebaseAuth.instance.currentUser!.phoneNumber;
+  }
+
+  static void setUid() {
+    uid = FirebaseAuth.instance.currentUser!.uid.toString();
+  }
+
+  Future<bool> login() async {
+    int flag = 0;
     try {
-      await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-      firebaseFirestore.collection('users').doc(_auth.currentUser!.uid).set({
-        'id': _auth.currentUser!.uid,
-        'email': email,
-        'public_key': public_key,
-        'private_key': private_key,
-        'password': password, // Need To be changed later on
+      await FirebaseAuth.instance
+          .signInWithCredential(this._phoneAuthCredential!)
+          .then((UserCredential authRes) {
+        firebaseUser = authRes.user!;
+        // // print(firebaseUser.toString());
+      }).catchError((e) {
+        flag = 1;
+        _handleError(e);
+        // // print("handle error in login1");
       });
-      print("User created in Successfully");
-    } on FirebaseAuthException catch (e) {
-      await showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                title: const Text("Error Occured"),
-                content: Text(e.toString()),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop();
-                      },
-                      child: const Text("OK"))
-                ],
-              ));
+      if (flag == 0)
+        return true;
+      else
+        return false;
     } catch (e) {
-      if (e == 'email-already-in-use') {
-        print('Email Already in use');
-      } else {
-        print('Error:$e');
-      }
+      _handleError(e);
+      return false;
     }
   }
 
-  Future<void> signOut(BuildContext context) async {
-    await _auth.signOut();
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (ctx) => const WelcomePage()));
-  }
-
-  Future<void> signInWithGoogle(BuildContext context) async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+  Future<void> logout() async {
+    didSighOut = true;
     try {
-      await _auth.signInWithCredential(credential);
-    } on FirebaseAuthException catch (e) {
-      await showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                title: const Text("Error Occured"),
-                content: Text(e.toString()),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop();
-                      },
-                      child: const Text("OK"))
-                ],
-              ));
+      await FirebaseAuth.instance.signOut();
+      firebaseUser = null;
     } catch (e) {
-      if (e == 'email-already-in-use') {
-        print('Email Already in use');
-      } else {
-        print('Error:$e');
-      }
+      _handleError(e);
     }
+  }
+
+  Future<void> submitPhoneNumber(String phone, context) async {
+    String phoneNumber = "+91 " + phone.toString().trim();
+    // print(phoneNumber);
+
+    void verificationCompleted(AuthCredential phoneAuthCredential) {
+      this._phoneAuthCredential = phoneAuthCredential;
+    }
+
+    void verificationFailed(FirebaseAuthException error) {
+      // print("handle error in otp verification");
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LandingPage()));
+      _handleError(error);
+    }
+
+    void codeSent(String verificationId, code) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MyOtp(phone)));
+      this._verificationId = verificationId;
+      this._code = code;
+    }
+
+    void codeAutoRetrievalTimeout(String verificationId) {}
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      timeout: Duration(milliseconds: 10000),
+      verificationCompleted: verificationCompleted,
+      verificationFailed: verificationFailed,
+      codeSent: codeSent,
+      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
+    );
+  }
+
+  Future<bool> submitOTP(String otp) async {
+    String smsCode = otp.toString().trim();
+    this._phoneAuthCredential = PhoneAuthProvider.credential(
+        verificationId: _verificationId!, smsCode: smsCode);
+    bool islogin = await login();
+
+    return islogin;
+  }
+
+  void displayUser() {
+    // print(firebaseUser.toString());
   }
 }
