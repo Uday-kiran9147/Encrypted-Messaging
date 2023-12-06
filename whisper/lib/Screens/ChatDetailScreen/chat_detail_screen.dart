@@ -10,10 +10,12 @@ import '../../Models/message.dart';
 class ChatDetailScreen extends StatefulWidget {
   final String randomUserId;
   final String randomUserEmail;
+  final String image;
   const ChatDetailScreen({
     Key? key,
     required this.randomUserId,
     required this.randomUserEmail,
+    required this.image,
   }) : super(key: key);
   @override
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
@@ -89,9 +91,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _messageController.clear();
     return Scaffold(
-      appBar: _buildAppBar(context, widget.randomUserEmail),
+      appBar: _buildAppBar(context, widget.randomUserEmail,widget.image),
       body: Stack(
         children: <Widget>[
           ListView(
@@ -190,7 +191,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, String emali) {
+  AppBar _buildAppBar(BuildContext context, String emali,imageurl) {
+    
     return AppBar(
       elevation: 0,
       automaticallyImplyLeading: false,
@@ -212,11 +214,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               const SizedBox(
                 width: 2,
               ),
-              const CircleAvatar(
-                backgroundImage: NetworkImage(
-                    "https://buffer.com/library/content/images/2023/10/free-images.jpg"),
-                maxRadius: 20,
-              ),
+             imageurl.isEmpty?  const CircleAvatar(
+                            maxRadius: 30,
+                            child: Icon(
+                              Icons.person,
+                              size: 30,
+                            ))
+                    : CircleAvatar(
+                        maxRadius: 30, backgroundImage: NetworkImage(imageurl)),
               const SizedBox(
                 width: 12,
               ),

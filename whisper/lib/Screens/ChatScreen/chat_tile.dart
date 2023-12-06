@@ -27,6 +27,7 @@ class _ConversationListState extends State<ConversationList> {
                 builder: (context) => ChatDetailScreen(
                       randomUserEmail: widget.documentSnapshot['phoneNumber'],
                       randomUserId: widget.documentSnapshot['id'],
+                      image: widget.documentSnapshot['image'],
                     )));
       },
       child: Container(
