@@ -1,5 +1,13 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../Provider/auth.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,13 +21,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _aboutController = TextEditingController();
 
+  File? _file;
   // Replace these with your actual user data
-  String username = "Mahi";
+  String username = "-";
   String status = "Available";
-  String bio = "bio.";
+  String bio = "bio";
   String about = "Plz tell about u.";
-  String imageUrl =
-      "https://images.indianexpress.com/2020/10/148841-clraytzonv-1602133322.jpg";
+  String imageUrl = "";
 
   late SharedPreferences _prefs;
 
@@ -29,20 +37,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadProfileData();
   }
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _bioController.dispose();
+    _aboutController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _getImage() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+      maxWidth: 250,
+    );
+    if (pickedImage != null) {
+      setState(() {
+        _file = File(pickedImage.path);
+      });
+    }
+  }
+
   Future<void> _loadProfileData() async {
-    _prefs = await SharedPreferences.getInstance();
+    // _prefs = await SharedPreferences.getInstance();
+    DocumentSnapshot userdocumentSnapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
 
     setState(() {
-      _nameController.text = _prefs.getString('name') ?? username;
-      _bioController.text = _prefs.getString('bio') ?? bio;
-      _aboutController.text = _prefs.getString('about') ?? about;
+      _nameController.text = userdocumentSnapshot['name'] ?? username;
+      _bioController.text = userdocumentSnapshot['bio'] ?? bio;
+      _aboutController.text = userdocumentSnapshot["about"] ?? about;
+      imageUrl = userdocumentSnapshot["image"] ?? "";
     });
+    print(userdocumentSnapshot.toString());
   }
 
   Future<void> _saveProfileData() async {
-    _prefs.setString('name', _nameController.text);
-    _prefs.setString('bio', _bioController.text);
-    _prefs.setString('about', _aboutController.text);
+    // _prefs.setString('name', _nameController.text);
+    // _prefs.setString('bio', _bioController.text);
+    // _prefs.setString('about', _aboutController.text);
+    await Provider.of<Auth>(context, listen: false).editProfile(
+        _nameController.text, _bioController.text, _aboutController.text);
   }
 
   @override
@@ -51,17 +89,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         title: const Center(child: Text('Profile')),
-        
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () async {
+              if (_file != null) {
+                await Provider.of<Auth>(context, listen: false).saveprofilepicture(_file!).then((value) {
+                  if (value) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Profile picture updated'),
+                      ),
+                    );
+                  }
+                  else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(backgroundColor: Colors.red,
+                        content: Text('Something went wrong picture not updated!'),
+                      ),
+                    );
+                  }
+                 
+                });
+              }
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 10,),
-            CircleAvatar(
-              radius: 70,
-              backgroundImage: NetworkImage(imageUrl),
+            const SizedBox(
+              height: 10,
+            ),
+            InkWell(
+              onTap:_getImage,
+              child: Container(
+                width: 100,
+                height: 99,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 2.0,
+                  ),
+                ),
+                child: _file != null || imageUrl.isEmpty
+                    ? _file != null
+                        ? CircleAvatar(
+                            radius: 53, backgroundImage: FileImage(_file!))
+                        : const CircleAvatar(
+                            radius: 53,
+                            child: Icon(
+                              Icons.person,
+                              size: 53,
+                            ))
+                    : CircleAvatar(
+                        radius: 50, backgroundImage: NetworkImage(imageUrl)),
+                // IconButton.outlined(
+                // (imageUrl.isEmpty || imageUrl.startsWith('http') == false)
+                //     ? const CircleAvatar(
+                //         radius: 53,
+                //         child: Icon(
+                //           Icons.person,
+                //           size: 53,
+                //         ))
+                //     : CircleAvatar(
+                //         radius: 53,
+                //         backgroundImage: NetworkImage(imageUrl)),
+              ),
             ),
             const SizedBox(height: 20),
             ListTile(
@@ -123,8 +221,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  _showEditDialog(
-      BuildContext context, String title, TextEditingController controller) async {
+  _showEditDialog(BuildContext context, String title,
+      TextEditingController controller) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -180,9 +278,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         _saveProfileData(); // Save changes to SharedPreferences
                         Navigator.of(context).pop();
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
-                      ),
+                      // style: ElevatedButton.styleFrom(
+                      //   backgroundColor: Colors.purple,
+                      // ),
                       child: const Text('Save'),
                     ),
                   ],

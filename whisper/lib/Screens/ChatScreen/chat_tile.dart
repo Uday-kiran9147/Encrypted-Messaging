@@ -17,6 +17,8 @@ class ConversationList extends StatefulWidget {
 class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
+  final String imageurl = widget.documentSnapshot['image'];
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -43,10 +45,15 @@ class _ConversationListState extends State<ConversationList> {
             Expanded(
               child: Row(
                 children: <Widget>[
-                  const CircleAvatar(
-                    // backgroundImage: NetworkImage(widget.imageUrl),
-                    maxRadius: 30,
-                  ),
+                    imageurl.isEmpty?  const CircleAvatar(
+                            maxRadius: 30,
+                            child: Icon(
+                              Icons.person,
+                              size: 30,
+                            ))
+                    : CircleAvatar(
+                        maxRadius: 30, backgroundImage: NetworkImage(imageurl)),
+                  
                   const SizedBox(
                     width: 16,
                   ),

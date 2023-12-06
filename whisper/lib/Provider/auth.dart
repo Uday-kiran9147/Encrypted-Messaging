@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:whisper/Models/user.dart';
 import 'package:whisper/Screens/Auth/otp.dart';
 import 'package:whisper/Services/DataBaseService/database_services.dart';
-
+import 'package:whisper/Services/DataBaseService/profile_edit.dart';
 
 class Auth with ChangeNotifier {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -35,6 +36,21 @@ class Auth with ChangeNotifier {
     uid = FirebaseAuth.instance.currentUser!.uid.toString();
   }
 
+  Future<void> editProfile(String name, about, bio) async {
+    await EditProfile().editProfile(name, about, bio);
+    notifyListeners();
+  }
+
+  Future<bool> saveprofilepicture(File image) async {
+    await EditProfile.saveprofilepicture(image).then((value) {
+      if (value) {
+        notifyListeners();
+        return value;
+      }
+    });
+    return false;
+  }
+
   Future<bool> login() async {
     int flag = 0;
     try {
@@ -46,13 +62,17 @@ class Auth with ChangeNotifier {
             .collection('users')
             .doc(Auth.uid)
             .get();
-        if (isuser.exists == false) {// if user is not registered
+        if (isuser.exists == false) {
+          // if user is not registered
           int privateKEY = Random().nextInt(5) + 100;
           int publicKEY = privateKEY * privateKEY;
           firebaseUser = authRes.user!;
           await DataBaseService().registerUserDetails(AppUser(
               id: firebaseUser!.uid,
               name: firebaseUser!.phoneNumber!,
+              bio: '',
+              about: '',
+              image: '',
               phoneNumber: firebaseUser!.phoneNumber!,
               private_key: privateKEY,
               public_key: publicKEY));

@@ -2,12 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whisper/Screens/Auth/login.dart';
-import 'package:whisper/Screens/ChatScreen/chat_screen.dart';
 import 'package:whisper/Screens/Common/splashScreen.dart';
 import 'Provider/auth.dart';
 import 'Screens/OnBoardingScreen/welcome_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'Screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,7 +56,7 @@ class MyApp extends StatelessWidget {
         return const WelcomePage();
       // break;
       case 1:
-        return const ChatScreen();
+        return const Home();
       // break;
       default:
         return const Center(child: Text('Something Went wrong : ((((('));

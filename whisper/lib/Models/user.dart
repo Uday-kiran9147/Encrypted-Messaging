@@ -4,12 +4,18 @@ import 'dart:convert';
 class AppUser {
   final String id;
   final String name;
+  final String bio;
+  final String about;
+  final String image;
   final String phoneNumber;
   final int private_key;
   final int public_key;
   const AppUser({
     required this.id,
     required this.name,
+    required this.bio,
+    required this.about,
+    required this.image,
     required this.phoneNumber,
     required this.private_key,
     required this.public_key,
@@ -19,6 +25,9 @@ class AppUser {
     return <String, dynamic>{
       'id': id,
       'name': name,
+      'bio': bio,
+      'about': about,
+      'image': image,
       'phoneNumber': phoneNumber,
       'private_key': private_key,
       'public_key': public_key,
@@ -29,6 +38,9 @@ class AppUser {
     return AppUser(
       id: (map["id"] ?? '') as String,
       name: (map["name"] ?? '') as String,
+      bio: (map["bio"] ?? '') as String,
+      about: (map["about"] ?? '') as String,
+      image: (map["image"] ?? '') as String,
       phoneNumber: (map["phoneNumber"] ?? '') as String,
       private_key: (map["private_key"] ?? 0) as int,
       public_key: (map["public_key"] ?? 0) as int,
