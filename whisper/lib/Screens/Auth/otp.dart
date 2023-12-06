@@ -21,32 +21,32 @@ class _MyOtpState extends State<MyOtp> {
   bool? islogintrue;
   final FirebaseAuth auth = FirebaseAuth.instance;
   var code1 = "";
-  late Timer _timer;
-  int _seconds = 60;
+  // late Timer _timer;
+  // int _seconds = 60;
 
-  @override
-  void initState() {
-    super.initState();
-    startTimer();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   startTimer();
+  // }
 
-  void startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_seconds == 0) {
-        _timer.cancel();
-      } else {
-        setState(() {
-          _seconds--;
-        });
-      }
-    });
-  }
+  // void startTimer() {
+  //   _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+  //     if (_seconds == 0) {
+  //       _timer.cancel();
+  //     } else {
+  //       setState(() {
+  //         _seconds--;
+  //       });
+  //     }
+  //   });
+  // }
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _timer.cancel();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -87,21 +87,17 @@ class _MyOtpState extends State<MyOtp> {
                         .collection('users')
                         .doc(Auth.uid)
                         .get();
+                          
 
                     if (islogintrue == true) {
-                      if (isuser.exists) {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const ChatScreen(),
-                      ));
-                      }
-                       else {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const LandingPage(),
-                          ),
-                        );
-                      }
+                       
+                     
+                      
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ChatScreen(),
+                        ));
                     } else {
+                     
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => const Login(),
@@ -110,10 +106,10 @@ class _MyOtpState extends State<MyOtp> {
                     }
                   },
                 ),
-                const SizedBox(height: 60),
-                Text("Resend in 00:${_seconds.toString().padLeft(2, '0')}sec"),
-                const SizedBox(height: 40),
-                const Row(
+                SizedBox(height: 60),
+                //Text("Resend in 00:${_seconds.toString().padLeft(2, '0')}sec"),
+                SizedBox(height: 40),
+                Row(
                   children: [
                     Icon(
                       Icons.check_box,

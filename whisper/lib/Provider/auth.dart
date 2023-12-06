@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:whisper/Models/user.dart';
 import 'package:whisper/Screens/Auth/otp.dart';
+import 'package:whisper/Screens/Common/landingpage.dart';
 import 'package:whisper/Services/DataBaseService/database_services.dart';
 import 'package:whisper/Services/DataBaseService/profile_edit.dart';
 
@@ -106,8 +107,27 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> submitPhoneNumber(String phone, context) async {
-    String phoneNumber = "+91${phone.toString().trim()}";
-    print(phoneNumber);
+    String phoneNumber = "+91 " + phone.toString().trim();
+
+    void verificationCompleted(AuthCredential phoneAuthCredential) {
+      this._phoneAuthCredential = phoneAuthCredential;
+    }
+
+    void verificationFailed(FirebaseAuthException error) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LandingPage()));
+      _handleError(error);
+    }
+
+    void codeSent(String verificationId, code) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MyOtp(phone)));
+      this._verificationId = verificationId;
+      this._code = code;
+    }
+
+    void codeAutoRetrievalTimeout(String verificationId) {}
+
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       timeout: const Duration(milliseconds: 10000),
