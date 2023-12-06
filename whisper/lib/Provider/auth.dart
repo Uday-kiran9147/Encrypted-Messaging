@@ -65,21 +65,20 @@ class Auth with ChangeNotifier {
 
   Future<void> submitPhoneNumber(String phone, context) async {
     String phoneNumber = "+91 " + phone.toString().trim();
-    // print(phoneNumber);
 
     void verificationCompleted(AuthCredential phoneAuthCredential) {
       this._phoneAuthCredential = phoneAuthCredential;
     }
 
     void verificationFailed(FirebaseAuthException error) {
-      // print("handle error in otp verification");
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LandingPage()));
       _handleError(error);
     }
 
     void codeSent(String verificationId, code) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MyOtp(phone)));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MyOtp(phone)));
       this._verificationId = verificationId;
       this._code = code;
     }

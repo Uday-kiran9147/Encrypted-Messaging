@@ -45,7 +45,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             fontSize: 32, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        FirebaseAuth.instance.currentUser!.email!,
+                        FirebaseAuth.instance.currentUser!.phoneNumber!,
                       ),
                     ],
                   ),

@@ -13,7 +13,7 @@ class DataBaseService {
     print('database');
     // getcurrent user info
     final String currentUserId = _firebaseAuth.currentUser!.uid;
-    final String currentUserEmail = _firebaseAuth.currentUser!.email!;
+    final String currentUserEmail = _firebaseAuth.currentUser!.phoneNumber!;
     final Timestamp timestamp = Timestamp.now();
 
     //create a new message
