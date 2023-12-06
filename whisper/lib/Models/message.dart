@@ -7,7 +7,7 @@ class Message {
   final String senderId;
   final String senderEmali;
   final String receiverId;
-  final String message;
+  final List<int> message;
   final Timestamp timeStamp;
   Message({
     required this.senderId,
@@ -32,7 +32,7 @@ class Message {
       senderId: (map["senderId"] ?? '') as String,
       senderEmali: (map["senderEmali"] ?? '') as String,
       receiverId: (map["receiverId"] ?? '') as String,
-      message: map['message'],
+      message: map['message'].cast<int>().toList(),
       timeStamp: map["timeStamp"],
     );
   }

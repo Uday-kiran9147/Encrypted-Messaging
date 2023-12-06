@@ -53,6 +53,8 @@ dependencies:
   flutter_otp_text_field: ^1.1.0+2
   firebase_storage: ^11.1.1
   firebase_core: ^2.7.1
+  contacts_service: ^0.6.3
+  image_picker: ^1.0.4
   
 
 dev_dependencies:

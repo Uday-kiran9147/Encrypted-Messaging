@@ -25,7 +25,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        margin: EdgeInsets.only(left: 20, right: 20),
+        margin: const EdgeInsets.only(left: 20, right: 20),
         alignment: Alignment.center,
         child: SingleChildScrollView(
           child: Form(
@@ -36,23 +36,23 @@ class _LoginState extends State<Login> {
               children: [
                 Lottie.network(
                     'https://lottie.host/70325e3a-ede7-4735-a1df-5b7f5d9f2b6d/uT2PqYdXQ5.json'),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                Text(
+                const Text(
                   "Phone Verification",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   "Please sign up your phone before getting started",
                   style: TextStyle(fontSize: 16),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   height: 50,
                   decoration: BoxDecoration(
                     border: Border.all(width: 1, color: Colors.grey),
@@ -64,13 +64,13 @@ class _LoginState extends State<Login> {
                     textBaseline:
                         TextBaseline.ideographic, // or TextBaseline.ideographic
                     children: [
-                      Icon(Icons.phone),
-                      SizedBox(width: 10),
+                      const Icon(Icons.phone),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: TextFormField(
                           controller: phone,
                           keyboardType: TextInputType.phone,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: InputBorder.none,
                             hintText: "Enter your phone number",
                           ),
@@ -80,6 +80,7 @@ class _LoginState extends State<Login> {
                             } else if (value.length != 10) {
                               return "Please enter a valid Mobile number";
                             }
+                            return null;
                             // return validatePhoneNumber(value);
                           },
                         ),
@@ -87,7 +88,7 @@ class _LoginState extends State<Login> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 SizedBox(
@@ -100,13 +101,13 @@ class _LoginState extends State<Login> {
                             .submitPhoneNumber(phone.text.toString(), context);
                       }
                     },
-                    child: Text("Send OTP"),
                     style: ElevatedButton.styleFrom(
-                      primary: Color.fromARGB(160, 119, 39, 176),
+                      backgroundColor: const Color.fromARGB(160, 119, 39, 176),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    child: const Text("Send OTP"),
                   ),
                 ),
               ],

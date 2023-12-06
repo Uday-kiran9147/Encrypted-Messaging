@@ -2,27 +2,28 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whisper/Screens/Auth/login.dart';
-import 'package:whisper/Screens/ChatScreen/chat_screen.dart';
 import 'package:whisper/Screens/Common/splashScreen.dart';
 import 'Provider/auth.dart';
 import 'Screens/OnBoardingScreen/welcome_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'Screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: Init.instance.initialize(context),
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return MaterialApp(home: SplashScreen());
+          return const MaterialApp(home: SplashScreen());
         } else {
           return MultiProvider(
             providers: [
@@ -49,16 +50,16 @@ class MyApp extends StatelessWidget {
   Widget getHome(int authLevel) {
     switch (authLevel) {
       case -1:
-        return Login();
+        return const Login();
       // break;
       case 0:
-        return WelcomePage();
+        return const WelcomePage();
       // break;
       case 1:
-        return ChatScreen();
+        return const Home();
       // break;
       default:
-        return Center(child: Text('Something Went wrong : ((((('));
+        return const Center(child: Text('Something Went wrong : ((((('));
     }
   }
 }

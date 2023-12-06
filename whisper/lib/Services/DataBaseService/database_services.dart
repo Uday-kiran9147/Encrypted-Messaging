@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:whisper/Models/message.dart';
+import 'package:whisper/Models/user.dart';
 
 class DataBaseService {
   // get instance of Auth and Firestore
@@ -8,8 +9,21 @@ class DataBaseService {
 
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
+  Future<void> registerUserDetails(AppUser user) async {
+    try {
+      FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+      firebaseFirestore
+          .collection('users')
+          .doc(_firebaseAuth.currentUser!.uid)
+          .set(user.toMap());
+      print("User created in Successfully");
+    } catch (e) {
+      print(e);
+    }
+  }
+
   // SEND message
-  Future<void> sendMessage(String receiverId, String messageText) async {
+  Future<void> sendMessage(String receiverId, List<int> messageText) async {
     print('database');
     // getcurrent user info
     final String currentUserId = _firebaseAuth.currentUser!.uid;
@@ -21,7 +35,7 @@ class DataBaseService {
         senderId: currentUserId,
         senderEmali: currentUserEmail,
         receiverId: receiverId,
-        message: messageText,
+        message: messageText.toList(),
         timeStamp: timestamp);
 
     List<String> userids = [currentUserId, receiverId];
