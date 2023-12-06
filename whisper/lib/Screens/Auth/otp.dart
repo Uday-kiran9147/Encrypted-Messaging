@@ -119,9 +119,13 @@ class _MyOtpState extends State<MyOtp> {
                       Icons.check_box,
                       color: Color(0xFF512DA8),
                     ),
-                    Text(
-                      "I agree to Whisper's Terms & Conditions & Privacy Policy",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Expanded(
+                      child: FittedBox(
+                        child: Text(
+                          "I agree to Whisper's Terms & Conditions & Privacy Policy",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
                   ],
                 ),

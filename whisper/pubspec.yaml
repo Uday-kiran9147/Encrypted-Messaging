@@ -51,7 +51,8 @@ dependencies:
   flutter_svg: ^2.0.4
   provider: ^6.0.5
   flutter_chat_ui: ^1.6.6
-  permission_handler: ^10.2.0
+  permission_handler: ^11.1.0
+  contacts_service: ^0.6.3
   
 
 dev_dependencies:
