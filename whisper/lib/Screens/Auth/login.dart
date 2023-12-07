@@ -1,120 +1,121 @@
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
-import 'package:whisper/Provider/auth.dart';
-
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
-  static String verify = "";
-  @override
-  State<Login> createState() => _LoginState();
-}
-
-class _LoginState extends State<Login> {
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController phone = TextEditingController();
-
-  String? validatePhoneNumber(String value) {
-    if (value.length != 10) {
-      return 'Phone number must have exactly 10 digits';
-    }
-    return null;
-  }
+import 'package:whisper/Screens/Auth/otp.dart';
+import 'package:whisper/Screens/home_screen.dart';
+class LoginScreen extends StatelessWidget {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.only(left: 20, right: 20),
-        alignment: Alignment.center,
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Lottie.network(
-                    'https://lottie.host/70325e3a-ede7-4735-a1df-5b7f5d9f2b6d/uT2PqYdXQ5.json'),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  "Phone Verification",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  "Please sign up your phone before getting started",
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  height: 50,
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment
-                        .baseline, // or CrossAxisAlignment.center
-                    textBaseline:
-                        TextBaseline.ideographic, // or TextBaseline.ideographic
-                    children: [
-                      const Icon(Icons.phone),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: TextFormField(
-                          controller: phone,
-                          keyboardType: TextInputType.phone,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Enter your phone number",
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please enter a mobile number";
-                            } else if (value.length != 10) {
-                              return "Please enter a valid Mobile number";
-                            }
-                            return null;
-                            // return validatePhoneNumber(value);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  height: 45,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        await Provider.of<Auth>(context, listen: false)
-                            .submitPhoneNumber(phone.text.toString(), context);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(160, 119, 39, 176),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text("Send OTP"),
-                  ),
-                ),
-              ],
+      appBar: AppBar(
+        title: Text('Login'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildTextField(
+              controller: _emailController,
+              labelText: 'Email',
+              icon: Icons.email,
+              keyboardType: TextInputType.emailAddress,
             ),
-          ),
+            SizedBox(height: 16.0),
+            _buildTextField(
+              controller: _passwordController,
+              labelText: 'Password',
+              icon: Icons.lock,
+              obscureText: true,
+            ),
+            SizedBox(height: 16.0),
+            _buildButton(
+              onPressed: () async {
+                print(_emailController.text);
+                print(_passwordController.text);
+                await signInWithEmailAndPassword(
+                  _emailController.text,
+                  _passwordController.text,
+                ).then((val) {
+                  if (val) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => Home()),
+                    );
+                  }
+                });
+              },
+              label: 'Login',
+              color: Colors.blue,
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignUpScreen(),
+                  ),
+                );
+              },
+              child: Text('Sign Up'),
+            ),
+          ],
         ),
       ),
     );
+  }
+    Widget _buildButton({
+    required VoidCallback onPressed,
+    required String label,
+    required Color color,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Text(label),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+      ),
+    );
+  }
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData icon,
+    bool obscureText = false,
+    TextInputType? keyboardType,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: labelText,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+      ),
+    );
+  }
+  }
+
+  Future<bool> signInWithEmailAndPassword(String email, String password) async {
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
+    print("User signed in: ${userCredential.user?.uid}");
+    // SHP.saveUserLoggedinStatusSP(true);
+    return true;
+  } catch (e) {
+    print("Error during sign in: $e");
+    // Fluttertoast.showToast(msg: e.toString());
+    return false;
+
   }
 }

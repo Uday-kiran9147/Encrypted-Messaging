@@ -1,136 +1,207 @@
-import 'dart:async';
+// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api, unnecessary_null_comparison
+
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import 'package:provider/provider.dart';
-import 'package:whisper/Provider/auth.dart';
+import 'package:whisper/Models/user.dart';
 import 'package:whisper/Screens/Auth/login.dart';
-import 'package:whisper/Screens/ChatScreen/chat_screen.dart';
-import 'package:whisper/Screens/Common/landingpage.dart';
+import 'package:whisper/Screens/home_screen.dart';
 
-class MyOtp extends StatefulWidget {
-  String phone;
-  MyOtp(this.phone, {super.key});
 
+class SignUpScreen extends StatefulWidget {
   @override
-  State<MyOtp> createState() => _MyOtpState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _MyOtpState extends State<MyOtp> {
-  bool? islogintrue;
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  var code1 = "";
-  // late Timer _timer;
-  // int _seconds = 60;
+class _SignUpScreenState extends State<SignUpScreen> {
+  final _auth = FirebaseAuth.instance;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  // final _usernameController = TextEditingController();
+  // final _contactsController = TextEditingController();
+  // TextEditingController _locationController = TextEditingController();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   startTimer();
-  // }
 
-  // void startTimer() {
-  //   _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-  //     if (_seconds == 0) {
-  //       _timer.cancel();
-  //     } else {
-  //       setState(() {
-  //         _seconds--;
-  //       });
-  //     }
-  //   });
-  // }
+  @override
+  void initState() {
+    super.initState();
+    // _locationFocusNode = FocusNode();
+  }
 
-  // @override
-  // void dispose() {
-  //   _timer.cancel();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    // _locationFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: Scaffold(
-        body: Container(
-          margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
-          alignment: Alignment.center,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const Text(
-                  "Verification Code",
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                Text("Enter the OTP sent to ${widget.phone}"),
-                const SizedBox(height: 20),
-                OtpTextField(
-                  numberOfFields: 6,
-                  borderColor: const Color(0xFF512DA8),
-                  showFieldAsBox: true,
-                  onCodeChanged: (String code) {
-                    code1 = code;
-                  },
-                  onSubmit: (String verificationCode) async {
-                    final provider = Provider.of<Auth>(context, listen: false);
-                    islogintrue =
-                        await Provider.of<Auth>(context, listen: false)
-                            .submitOTP(verificationCode);
-
-                    Auth.setUid();
-
-                    var isuser = await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(Auth.uid)
-                        .get();
-                          
-
-                    if (islogintrue == true) {
-                       
-                     
-                      
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ChatScreen(),
-                        ));
-                    } else {
-                     
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const Login(),
-                        ),
-                      );
-                    }
-                  },
-                ),
-                SizedBox(height: 60),
-                //Text("Resend in 00:${_seconds.toString().padLeft(2, '0')}sec"),
-                SizedBox(height: 40),
-                Row(
+    return Scaffold(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Card(
+              elevation: 8.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(
-                      Icons.check_box,
-                      color: Color(0xFF512DA8),
+                    // if (waitingforlocation) LinearProgressIndicator(),
+                    // _buildTextField(
+                    //   controller: _usernameController,
+                    //   labelText: 'Username',
+                    //   hintText: 'Enter your username',
+                    //   icon: Icons.person,
+                    // ),
+                    // _buildTextField(
+                    //   controller: _contactsController,
+                    //   labelText: 'Contact',
+                    //   hintText: 'Enter your contact info',
+                    //   icon: Icons.call,
+                    // ),
+                    _buildTextField(
+                      controller: _emailController,
+                      labelText: 'Email',
+                      hintText: 'Enter your email address',
+                      icon: Icons.email,
                     ),
-                    Expanded(
-                      child: FittedBox(
-                        child: Text(
-                          "I agree to Whisper's Terms & Conditions & Privacy Policy",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                    _buildTextField(
+                      controller: _passwordController,
+                      labelText: 'Password',
+                      hintText: 'Enter your password',
+                      icon: Icons.lock,
+                      obscureText: true,
+                    ),
+                   
+                    _buildButton(
+                      onPressed: () async {
+                        await register(
+                          _emailController.text,
+                          _passwordController.text,
+                          // _usernameController.text,
+                          // _locationController.text,
+                          // _contactsController.text,
+                        ).then((value) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => Home()),
+                          );
+                        });
+                      },
+                      label: 'Register',
+                      color: Colors.blue,
+                    ),
+                    _buildButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                      },
+                      label: 'Login',
+                      color: Colors.grey,
                     ),
                   ],
                 ),
-                const SizedBox(height: 30),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    required String hintText,
+    required IconData icon,
+    bool obscureText = false,
+    bool enabled = true,
+    Widget? suffixIcon,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        controller: controller,
+        obscureText: obscureText,
+        enabled: enabled,
+        decoration: InputDecoration(
+          labelText: labelText,
+          hintText: hintText,
+          prefixIcon: Icon(icon),
+          suffixIcon: suffixIcon,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButton({
+    required VoidCallback onPressed,
+    required String label,
+    required Color color,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        child: Text(label),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+Future<void> register(
+  String email,
+  String password,
+  
+) async {
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .whenComplete(() async {
+           int privateKEY = Random().nextInt(5) + 100;
+          int publicKEY = privateKEY * privateKEY;
+          AppUser newuser = AppUser(
+            id: FirebaseAuth.instance.currentUser!.uid,
+            name: '',
+            bio: '',
+            about: '',
+            image: '',
+            password: password,
+            email: email,
+            private_key: privateKEY,
+            public_key: publicKEY,
+          );
+      await FirebaseFirestore.instance.collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(newuser.toMap());
+    });
+    print("User registered: ${userCredential.user?.uid}");
+  } catch (e) {
+    // print("Error during registration: $e");
+    // Fluttertoast.showToast(
+    //     msg: e.toString(),
+    //     backgroundColor: Colors.redAccent,
+    //     toastLength: Toast.LENGTH_LONG);
   }
 }

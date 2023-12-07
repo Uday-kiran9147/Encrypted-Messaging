@@ -4,10 +4,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:whisper/Models/user.dart';
-import 'package:whisper/Screens/Auth/otp.dart';
 import 'package:whisper/Screens/Common/landingpage.dart';
-import 'package:whisper/Services/DataBaseService/database_services.dart';
 import 'package:whisper/Services/DataBaseService/profile_edit.dart';
 
 class Auth with ChangeNotifier {
@@ -68,15 +65,15 @@ class Auth with ChangeNotifier {
           int privateKEY = Random().nextInt(5) + 100;
           int publicKEY = privateKEY * privateKEY;
           firebaseUser = authRes.user!;
-          await DataBaseService().registerUserDetails(AppUser(
-              id: firebaseUser!.uid,
-              name: firebaseUser!.phoneNumber!,
-              bio: '',
-              about: '',
-              image: '',
-              phoneNumber: firebaseUser!.phoneNumber!,
-              private_key: privateKEY,
-              public_key: publicKEY));
+          // await DataBaseService().registerUserDetails(AppUser(
+          //     id: firebaseUser!.uid,
+          //     name: firebaseUser!.phoneNumber!,
+          //     bio: '',
+          //     about: '',
+          //     image: '',
+          //     email: firebaseUser!.phoneNumber!,
+          //     private_key: privateKEY,
+          //     public_key: publicKEY));
           // }
           // print(firebaseUser.toString());
         }
@@ -120,8 +117,8 @@ class Auth with ChangeNotifier {
     }
 
     void codeSent(String verificationId, code) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MyOtp(phone)));
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => MyOtp(phone)));
       this._verificationId = verificationId;
       this._code = code;
     }
@@ -149,11 +146,11 @@ class Auth with ChangeNotifier {
       codeSent: (String verificationId, int? resendToken) {
         _verificationId = verificationId;
         _code = resendToken;
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MyOtp(phoneNumber),
-            ));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => MyOtp(phoneNumber),
+        //     ));
       },
       codeAutoRetrievalTimeout: (String verificationId) {
         _verificationId = verificationId;

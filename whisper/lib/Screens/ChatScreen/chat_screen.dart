@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:whisper/Provider/auth.dart';
 import 'package:whisper/Screens/ChatScreen/chat_tile.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:whisper/Screens/OnBoardingScreen/welcome_page.dart';
 
 class ChatUsers {
   String name;
@@ -31,11 +30,11 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Contact>? contacts;
   List<String>? strings;
 
-  bool isloading = true;
+  // bool isloading = true;
   @override
   void initState() {
     super.initState();
-    getPermissions();
+    // getPermissions();
   }
 
   void getPermissions() async {
@@ -46,7 +45,7 @@ class _ChatScreenState extends State<ChatScreen> {
           .take(30) // Limit to 30 values
           .toList();
       setState(() {
-        isloading = false;
+        // isloading = false;
       });
       // print(strings);
     } else {
@@ -74,7 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             fontSize: 32, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        FirebaseAuth.instance.currentUser!.phoneNumber!,
+                        FirebaseAuth.instance.currentUser!.email!,
                       ),
                     ],
                   ),
@@ -107,49 +106,35 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ),
-            isloading
-                ? const Center(child: CircularProgressIndicator())
-                :
-                // ListView.builder(
-                //   physics: const NeverScrollableScrollPhysics(),
-                //   itemCount: contacts!.length,
-                //   shrinkWrap: true,
-                //   itemBuilder: (context, index) {
-                //   return ListTile(
-                //     title: Text(contacts![index].givenName!),
-                //     subtitle: Text(contacts![index].phones![0].value!),
-                //   );
-                // })
-                StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('users')
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return const Text("Something went wrong");
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Text("Loading");
-                      }
+            StreamBuilder(
+                stream:
+                    FirebaseFirestore.instance.collection('users').snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Text("Something went wrong");
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text("Loading");
+                  }
 
-                      return ListView.separated(
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 8.0),
-                        itemCount: snapshot.data!.docs.length,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.only(top: 16),
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          if (snapshot.data!.docs[index]['id'] ==
-                              FirebaseAuth.instance.currentUser!.uid) {
-                            return Container();
-                          } else {
-                            return ConversationList(
-                                documentSnapshot: snapshot.data!.docs[index]);
-                          }
-                        },
-                      );
-                    }),
+                  return ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 8.0),
+                    itemCount: snapshot.data!.docs.length,
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.only(top: 16),
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      if (snapshot.data!.docs[index]['id'] ==
+                          FirebaseAuth.instance.currentUser!.uid) {
+                        return Container();
+                      } else {
+                        return ConversationList(
+                            documentSnapshot: snapshot.data!.docs[index]);
+                      }
+                    },
+                  );
+                }),
           ],
         ),
       ),

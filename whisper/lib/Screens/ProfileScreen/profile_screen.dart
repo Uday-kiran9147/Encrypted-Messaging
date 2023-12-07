@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:whisper/Screens/Secure/secure_file_storage.dart';
 
 import '../../Provider/auth.dart';
 
@@ -215,6 +216,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
             ),
+            const SizedBox(height: 10),
+            ElevatedButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>SecureFile()));
+            }, child: Text('Secure storage'))
           ],
         ),
       ),

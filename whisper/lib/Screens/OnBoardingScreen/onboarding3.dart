@@ -62,7 +62,7 @@ class _OnboardingThirdState extends State<OnboardingThird> {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => const Login(),
+                            builder: (context) =>  LoginScreen(),
                           ),
                         );
                       },

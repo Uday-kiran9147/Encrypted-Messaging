@@ -7,7 +7,8 @@ class AppUser {
   final String bio;
   final String about;
   final String image;
-  final String phoneNumber;
+  final String email;
+  final String password;
   final int private_key;
   final int public_key;
   const AppUser({
@@ -16,7 +17,8 @@ class AppUser {
     required this.bio,
     required this.about,
     required this.image,
-    required this.phoneNumber,
+    required this.email,
+    required this.password,
     required this.private_key,
     required this.public_key,
   });
@@ -28,7 +30,8 @@ class AppUser {
       'bio': bio,
       'about': about,
       'image': image,
-      'phoneNumber': phoneNumber,
+      'email': email,
+      'password': password,
       'private_key': private_key,
       'public_key': public_key,
     };
@@ -41,7 +44,8 @@ class AppUser {
       bio: (map["bio"] ?? '') as String,
       about: (map["about"] ?? '') as String,
       image: (map["image"] ?? '') as String,
-      phoneNumber: (map["phoneNumber"] ?? '') as String,
+      email: (map["email"] ?? '') as String,
+      password: (map["password"] ?? '') as String,
       private_key: (map["private_key"] ?? 0) as int,
       public_key: (map["public_key"] ?? 0) as int,
     );
