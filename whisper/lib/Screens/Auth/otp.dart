@@ -19,22 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _auth = FirebaseAuth.instance;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  // final _usernameController = TextEditingController();
-  // final _contactsController = TextEditingController();
-  // TextEditingController _locationController = TextEditingController();
 
-
-  @override
-  void initState() {
-    super.initState();
-    // _locationFocusNode = FocusNode();
-  }
-
-  @override
-  void dispose() {
-    // _locationFocusNode.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,19 +38,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // if (waitingforlocation) LinearProgressIndicator(),
-                    // _buildTextField(
-                    //   controller: _usernameController,
-                    //   labelText: 'Username',
-                    //   hintText: 'Enter your username',
-                    //   icon: Icons.person,
-                    // ),
-                    // _buildTextField(
-                    //   controller: _contactsController,
-                    //   labelText: 'Contact',
-                    //   hintText: 'Enter your contact info',
-                    //   icon: Icons.call,
-                    // ),
                     _buildTextField(
                       controller: _emailController,
                       labelText: 'Email',
@@ -85,9 +57,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         await register(
                           _emailController.text,
                           _passwordController.text,
-                          // _usernameController.text,
-                          // _locationController.text,
-                          // _contactsController.text,
                         ).then((value) {
                           Navigator.pushReplacement(
                             context,
@@ -198,10 +167,6 @@ Future<void> register(
     });
     print("User registered: ${userCredential.user?.uid}");
   } catch (e) {
-    // print("Error during registration: $e");
-    // Fluttertoast.showToast(
-    //     msg: e.toString(),
-    //     backgroundColor: Colors.redAccent,
-    //     toastLength: Toast.LENGTH_LONG);
+
   }
 }
