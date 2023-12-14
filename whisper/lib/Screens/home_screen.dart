@@ -40,17 +40,20 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         onTap: _onItemTapped,
         currentIndex: _currentIndex,
-        selectedItemColor: Colors.deepPurple,
+        selectedItemColor: Colors.white,
         type: BottomNavigationBarType.shifting,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.message),
+            icon: Icon(Icons.message,color: Colors.white,),
+            backgroundColor: Color(0xFF2C384A),
             label: "Chats",
+            
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle), label: "Profile"),
+            backgroundColor: Color(0xFF2C384A),
+              icon: Icon(Icons.account_circle,color: Colors.white,), label: "Profile"),
         ],
       ),
     );

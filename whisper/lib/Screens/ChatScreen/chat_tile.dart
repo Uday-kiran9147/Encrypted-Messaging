@@ -47,10 +47,12 @@ class _ConversationListState extends State<ConversationList> {
               child: Row(
                 children: <Widget>[
                     imageurl.isEmpty?  const CircleAvatar(
+                      backgroundColor: Colors.grey,
                             maxRadius: 30,
                             child: Icon(
                               Icons.person,
                               size: 30,
+                              color: Color(0xFF2C384A),
                             ))
                     : CircleAvatar(
                         maxRadius: 30, backgroundImage: NetworkImage(imageurl)),

@@ -56,7 +56,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple[50],
+      backgroundColor: Color(0xFF262A34),
       body: SafeArea(
         child: Column(
           children: [
@@ -67,13 +67,19 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   Column(
                     children: [
-                      const Text(
-                        "Chats",
-                        style: TextStyle(
-                            fontSize: 32, fontWeight: FontWeight.bold),
+                      SizedBox(height: 20,),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: const Text(
+                          "Chats",
+                          style: TextStyle(
+                            color: Colors.white,
+                              fontSize: 38, fontWeight: FontWeight.bold),
+                        ),
                       ),
                       Text(
                         FirebaseAuth.instance.currentUser!.email!,
+                        style: TextStyle(color: Colors.white),
                       ),
                     ],
                   ),
@@ -82,29 +88,29 @@ class _ChatScreenState extends State<ChatScreen> {
                           onPressed: () {
                             Provider.of<Auth>(context, listen: false).logout();
                           },
-                          child: const Text("Logout")))
+                          child: const Text("Logout",style: TextStyle(color: Colors.white),)))
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Search...",
-                  hintStyle: TextStyle(color: Colors.grey.shade600),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey.shade600,
-                    size: 20,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  contentPadding: const EdgeInsets.all(8),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.grey.shade100)),
-                ),
-              ),
+              // child: TextField(
+              //   decoration: InputDecoration(
+              //     hintText: "Search...",
+              //     hintStyle: TextStyle(color: Colors.grey.shade600),
+              //     prefixIcon: Icon(
+              //       Icons.search,
+              //       color: Colors.grey.shade600,
+              //       size: 20,
+              //     ),
+              //     filled: true,
+              //     fillColor: Colors.grey.shade100,
+              //     contentPadding: const EdgeInsets.all(8),
+              //     enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(20),
+              //         borderSide: BorderSide(color: Colors.grey.shade100)),
+              //   ),
+              // ),
             ),
             StreamBuilder(
                 stream:

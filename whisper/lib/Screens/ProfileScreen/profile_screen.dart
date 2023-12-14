@@ -88,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color(0xFF2C384A),
         title: const Center(child: Text('Profile')),
         actions: [
           IconButton(
@@ -128,9 +128,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             InkWell(
               onTap:_getImage,
               child: Container(
-                width: 100,
-                height: 99,
+                width: 145,
+                height: 145,
                 decoration: BoxDecoration(
+                
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: Colors.white,
@@ -142,8 +143,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? CircleAvatar(
                             radius: 53, backgroundImage: FileImage(_file!))
                         : const CircleAvatar(
+                          backgroundColor: Color.fromARGB(255, 220, 214, 214),
                             radius: 53,
                             child: Icon(
+                              color:Color(0xFF262A34),
                               Icons.person,
                               size: 53,
                             ))
@@ -162,12 +165,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 //         backgroundImage: NetworkImage(imageUrl)),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             ListTile(
               leading: const Icon(Icons.person_3_rounded),
               title: const Text(
                 'Name',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 _nameController.text,
@@ -185,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               leading: const Icon(Icons.favorite),
               title: const Text(
                 'Bio',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 _bioController.text,
@@ -203,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               leading: const Icon(Icons.info),
               title: const Text(
                 'About',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 _aboutController.text,
@@ -217,9 +220,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            ElevatedButton(onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>SecureFile()));
-            }, child: Text('Secure storage'))
+            Container(
+              height: 45,
+              width: 130,
+              child: ElevatedButton(
+                
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF262A34),
+                  shadowColor:Colors.grey,
+                  elevation: 10,
+                  
+                ),
+                onPressed: (){
+                
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SecureFile()));
+              }, child: Text('Secure storage')),
+            )
           ],
         ),
       ),
@@ -283,9 +299,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         _saveProfileData(); // Save changes to SharedPreferences
                         Navigator.of(context).pop();
                       },
-                      // style: ElevatedButton.styleFrom(
-                      //   backgroundColor: Colors.purple,
-                      // ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF262A34),
+                      ),
                       child: const Text('Save'),
                     ),
                   ],
