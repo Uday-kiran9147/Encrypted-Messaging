@@ -27,6 +27,8 @@ class _HomeState extends State<Home> {
   int _currentIndex = 0;
   static List<Widget> bottomlist = <Widget>[const ChatScreen(),  const ProfileScreen()];
 
+
+
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;

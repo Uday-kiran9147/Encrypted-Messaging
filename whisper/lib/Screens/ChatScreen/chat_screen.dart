@@ -31,9 +31,11 @@ class _ChatScreenState extends State<ChatScreen> {
   List<String>? strings;
 
   // bool isloading = true;
+  
   @override
   void initState() {
     super.initState();
+    
     // getPermissions();
   }
 
