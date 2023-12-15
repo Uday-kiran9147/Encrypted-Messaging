@@ -92,42 +92,46 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF262A34),
       appBar: _buildAppBar(context, widget.randomUserEmail,widget.image),
       body: Stack(
         children: <Widget>[
-          ListView(
-            physics: const BouncingScrollPhysics(),
-            children: [
-              StreamBuilder(
-                  stream: _dataService.getMessages(
-                      _auth.currentUser!.uid, widget.randomUserId),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return const Text("Something went wrong");
-                    }
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    }
-                    return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(top: 10, bottom: 10),
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return MessageWidget(
-                          messages: Message.fromMap(snapshot.data!.docs[index]
-                              .data() as Map<String, dynamic>),
-                          currentUserKeys: currentUserKey,
-                          randomUserKeys: randomUserKey,
-                        );
-                      },
-                    );
-                  }),
-              const SizedBox(
-                // Try to match height and below container height
-                height: 60,
-              )
-            ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                StreamBuilder(
+                    stream: _dataService.getMessages(
+                        _auth.currentUser!.uid, widget.randomUserId),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text("Something went wrong");
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
+                      return ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return MessageWidget(
+                            messages: Message.fromMap(snapshot.data!.docs[index]
+                                .data() as Map<String, dynamic>),
+                            currentUserKeys: currentUserKey,
+                            randomUserKeys: randomUserKey,
+                          );
+                        },
+                      );
+                    }),
+                const SizedBox(
+                  // Try to match height and below container height
+                  height: 60,
+                )
+              ],
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -145,7 +149,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       height: 30,
                       width: 30,
                       decoration: BoxDecoration(
-                        color: Colors.lightBlue,
+                        color: Color(0xFF2C384A),
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: const Icon(
@@ -174,7 +178,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   ),
                   FloatingActionButton(
                     onPressed: sendMessage,
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Color(0xFF2C384A),
                     elevation: 0,
                     child: const Icon(
                       Icons.send,
@@ -194,66 +198,71 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   AppBar _buildAppBar(BuildContext context, String emali,imageurl) {
     
     return AppBar(
+    
       elevation: 0,
       automaticallyImplyLeading: false,
       backgroundColor: Colors.white,
       flexibleSpace: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.only(right: 16),
-          child: Row(
-            children: <Widget>[
-              IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.only(right: 16),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                width: 2,
-              ),
-             imageurl.isEmpty?  const CircleAvatar(
-                            maxRadius: 30,
-                            child: Icon(
-                              Icons.person,
-                              size: 30,
-                            ))
-                    : CircleAvatar(
-                        maxRadius: 30, backgroundImage: NetworkImage(imageurl)),
-              const SizedBox(
-                width: 12,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text(
-                        emali,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600),
+                const SizedBox(
+                  width: 2,
+                ),
+               imageurl.isEmpty?  const CircleAvatar(
+                              maxRadius: 30,
+                              backgroundColor: Color(0xFF2C384A),
+                              child: Icon(
+                                Icons.person,
+                                size: 30,
+                              ))
+                      : CircleAvatar(
+                          maxRadius: 30, backgroundImage: NetworkImage(imageurl)),
+                const SizedBox(
+                  width: 12,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text(
+                          emali,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 6,
-                    ),
-                    Text(
-                      "Online",
-                      style:
-                          TextStyle(color: Colors.grey.shade600, fontSize: 13),
-                    ),
-                  ],
+                      const SizedBox(
+                        height: 6,
+                      ),
+                      Text(
+                        "Online",
+                        style:
+                            TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(
-                Icons.more_vert,
-                color: Colors.black54,
-              ),
-            ],
+                const Icon(
+                  Icons.more_vert,
+                  color: Colors.black54,
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,6 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:whisper/Screens/Auth/otp.dart';
 import 'package:whisper/Screens/home_screen.dart';
 class LoginScreen extends StatelessWidget {
@@ -11,58 +12,73 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        backgroundColor: Color(0xFF2C384A),
+        title: Center(child: Text('Login')),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTextField(
-              controller: _emailController,
-              labelText: 'Email',
-              icon: Icons.email,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 16.0),
-            _buildTextField(
-              controller: _passwordController,
-              labelText: 'Password',
-              icon: Icons.lock,
-              obscureText: true,
-            ),
-            SizedBox(height: 16.0),
-            _buildButton(
-              onPressed: () async {
-                print(_emailController.text);
-                print(_passwordController.text);
-                await signInWithEmailAndPassword(
-                  _emailController.text,
-                  _passwordController.text,
-                ).then((val) {
-                  if (val) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => Home()),
-                    );
-                  }
-                });
-              },
-              label: 'Login',
-              color: Colors.blue,
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SignUpScreen(),
-                  ),
-                );
-              },
-              child: Text('Sign Up'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+          
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Lottie.network("https://lottie.host/2395d6da-2bef-4233-b076-9782273216d1/K7LxMjwK1U.json", animate: true),
+        
+              
+              _buildTextField(
+                controller: _emailController,
+                labelText: 'Email',
+                icon: Icons.email,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 16.0),
+              _buildTextField(
+                controller: _passwordController,
+                labelText: 'Password',
+                icon: Icons.lock,
+                obscureText: true,
+              ),
+              SizedBox(height: 16.0),
+              Container(
+                height: 45,
+                width: 130,
+                child: _buildButton(
+                  
+                  onPressed: () async {
+                    print(_emailController.text);
+                    print(_passwordController.text);
+                    await signInWithEmailAndPassword(
+                      _emailController.text,
+                      _passwordController.text,
+                    ).then((val) {
+                      if (val) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => Home()),
+                        );
+                      }
+                    });
+                  },
+                  
+                  label: 'Login',
+                  color: Color(0xFF262A34),
+              
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SignUpScreen(),
+                    ),
+                  );
+                },
+                child: Text('Sign Up',style: TextStyle(color: Colors.black),),
+                
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -96,7 +112,16 @@ class LoginScreen extends StatelessWidget {
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: labelText,
-        prefixIcon: Icon(icon),
+         labelStyle: TextStyle(color: Colors.black), 
+        prefixIcon: Icon(icon,color: Colors.black,),
+        focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black), // Change the border color here
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black), // Change the border color here
+        borderRadius: BorderRadius.circular(12.0),
+      ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),

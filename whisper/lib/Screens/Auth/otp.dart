@@ -28,60 +28,66 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(18.0),
-            child: Card(
-              elevation: 8.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildTextField(
-                      controller: _emailController,
-                      labelText: 'Email',
-                      hintText: 'Enter your email address',
-                      icon: Icons.email,
+            child: Column(
+              children: [
+                 
+                Card(
+                  elevation: 8.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                       
+                        _buildTextField(
+                          controller: _emailController,
+                          labelText: 'Email',
+                          hintText: 'Enter your email address',
+                          icon: Icons.email,
+                        ),
+                        _buildTextField(
+                          controller: _passwordController,
+                          labelText: 'Password',
+                          hintText: 'Enter your password',
+                          icon: Icons.lock,
+                          obscureText: true,
+                        ),
+                       
+                        _buildButton(
+                          onPressed: () async {
+                            await register(
+                              _emailController.text,
+                              _passwordController.text,
+                            ).then((value) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => Home()),
+                              );
+                            });
+                          },
+                          label: 'Register',
+                          color: Color(0xFF2C384A),
+                        ),
+                        _buildButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
+                            );
+                          },
+                          label: 'Login',
+                          color: Colors.grey,
+                        ),
+                      ],
                     ),
-                    _buildTextField(
-                      controller: _passwordController,
-                      labelText: 'Password',
-                      hintText: 'Enter your password',
-                      icon: Icons.lock,
-                      obscureText: true,
-                    ),
-                   
-                    _buildButton(
-                      onPressed: () async {
-                        await register(
-                          _emailController.text,
-                          _passwordController.text,
-                        ).then((value) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => Home()),
-                          );
-                        });
-                      },
-                      label: 'Register',
-                      color: Colors.blue,
-                    ),
-                    _buildButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginScreen(),
-                          ),
-                        );
-                      },
-                      label: 'Login',
-                      color: Colors.grey,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -107,8 +113,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
         decoration: InputDecoration(
           labelText: labelText,
           hintText: hintText,
-          prefixIcon: Icon(icon),
+      
           suffixIcon: suffixIcon,
+          labelStyle: TextStyle(color: Colors.black), 
+        prefixIcon: Icon(icon,color: Colors.black,),
+        focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black), // Change the border color here
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black), // Change the border color here
+        borderRadius: BorderRadius.circular(12.0),
+      ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
           ),
