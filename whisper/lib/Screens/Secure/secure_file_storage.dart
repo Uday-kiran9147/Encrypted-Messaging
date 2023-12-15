@@ -67,7 +67,7 @@ class _SecureFileState extends State<SecureFile> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF130160),
+        backgroundColor: Color(0xFF2C384A),
         title: Center(child: Text('Secure File Storage')),
       ),
       body: Center(
@@ -98,7 +98,7 @@ class _SecureFileState extends State<SecureFile> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           // color:Color(0xFF1F0954),
-          color: Color(0xFF130160),
+          color: Color(0xFF262A34),
         ),
         alignment: Alignment.center,
         child: Text(
@@ -129,7 +129,7 @@ class _SecureFileState extends State<SecureFile> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           // color:Color(0xFF1F0954),
-          color: Color(0xFF130160),
+          color: Color(0xFF262A34),
         ),
         alignment: Alignment.center,
         child: Text(
