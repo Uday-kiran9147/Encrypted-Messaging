@@ -21,7 +21,8 @@ class ChatDetailScreen extends StatefulWidget {
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
 }
 
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
+class _ChatDetailScreenState extends State<ChatDetailScreen>
+    with WidgetsBindingObserver {
   final DataBaseService _dataService = DataBaseService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   EncryptionService em = EncryptionService();
@@ -29,9 +30,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
 
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  String statu = "";
 
   Keys currentUserKey = Keys(0, 0);
   Keys randomUserKey = Keys(0, 0);
+
   Future<void> getRandonUserPublicKey() async {
     DocumentSnapshot userSnapshot = await _firebaseFirestore
         .collection('users')
@@ -44,7 +47,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
     randomUserKey.public = randomUserPublicKEY;
     randomUserKey.private = randomUserprivateKEY;
-    
+
     print(randomUserKey.toString());
   }
 
@@ -76,6 +79,24 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   void initState() {
     getKeys();
     super.initState();
+    WidgetsBinding.instance.addObserver(this as WidgetsBindingObserver);
+    setStatus("Online");
+  }
+
+  void setStatus(String status) async {
+    statu = status;
+     print('Status updated to: $status');
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      //Online
+      setStatus("online");
+    } else {
+      //Offline
+      setStatus("Offline");
+    }
   }
 
   getKeys() async {
@@ -91,9 +112,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(statu);
     return Scaffold(
       backgroundColor: Color(0xFF262A34),
-      appBar: _buildAppBar(context, widget.randomUserEmail,widget.image),
+      appBar: _buildAppBar(context, widget.randomUserEmail, widget.image),
       body: Stack(
         children: <Widget>[
           Padding(
@@ -195,10 +217,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, String emali,imageurl) {
-    
+  AppBar _buildAppBar(BuildContext context, String emali, imageurl) {
     return AppBar(
-    
       elevation: 0,
       automaticallyImplyLeading: false,
       backgroundColor: Colors.white,
@@ -221,15 +241,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 const SizedBox(
                   width: 2,
                 ),
-               imageurl.isEmpty?  const CircleAvatar(
-                              maxRadius: 30,
-                              backgroundColor: Color(0xFF2C384A),
-                              child: Icon(
-                                Icons.person,
-                                size: 30,
-                              ))
-                      : CircleAvatar(
-                          maxRadius: 30, backgroundImage: NetworkImage(imageurl)),
+                imageurl.isEmpty
+                    ? const CircleAvatar(
+                        maxRadius: 30,
+                        backgroundColor: Color(0xFF2C384A),
+                        child: Icon(
+                          Icons.person,
+                          size: 30,
+                        ))
+                    : CircleAvatar(
+                        maxRadius: 30, backgroundImage: NetworkImage(imageurl)),
                 const SizedBox(
                   width: 12,
                 ),
@@ -250,9 +271,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         height: 6,
                       ),
                       Text(
-                        "Online",
-                        style:
-                            TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                        statu,
+                        style: TextStyle(
+                            color: Colors.grey.shade600, fontSize: 13),
                       ),
                     ],
                   ),
