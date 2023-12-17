@@ -84,8 +84,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen>
   }
 
   void setStatus(String status) async {
-    statu = status;
-     print('Status updated to: $status');
+    setState(() {
+      statu = status;
+    });
+    print('Status updated to: $status');
   }
 
   @override
@@ -217,7 +219,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen>
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, String emali,String imageurl) {
+  AppBar _buildAppBar(BuildContext context, String emali, String imageurl) {
     return AppBar(
       elevation: 0,
       automaticallyImplyLeading: false,
@@ -270,7 +272,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen>
                       // const SizedBox(
                       //   height: 6,
                       // ),
-                      FittedBox(fit: BoxFit.contain,
+                      FittedBox(
+                        fit: BoxFit.contain,
                         child: Text(
                           statu,
                           style: TextStyle(
@@ -322,7 +325,7 @@ class MessageWidget extends StatelessWidget {
                 bottomLeft: Radius.circular(20));
 
     return Container(
-      padding: const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
       child: Align(
         alignment: messages.senderId == FirebaseAuth.instance.currentUser!.uid
             ? Alignment.topRight
@@ -334,7 +337,7 @@ class MessageWidget extends StatelessWidget {
                       ? Colors.deepPurple[100]
                       : Colors.grey.shade200),
               borderRadius: borderRadius),
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(10),
           child: Text(
             decryptedString,
             style: const TextStyle(fontSize: 15),

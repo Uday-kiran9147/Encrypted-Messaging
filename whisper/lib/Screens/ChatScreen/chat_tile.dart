@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:intl/intl.dart';
 import '../ChatDetailScreen/chat_detail_screen.dart';
 
 class ConversationList extends StatefulWidget {
@@ -73,8 +73,8 @@ class _ConversationListState extends State<ConversationList> {
                           const SizedBox(
                             height: 6,
                           ),
-                          const Text(
-                            'Recent message',
+                           Text(
+                            widget.documentSnapshot['name'].toString().isNotEmpty? widget.documentSnapshot['name'].toString():'-- --',
                           ),
                         ],
                       ),
@@ -84,7 +84,7 @@ class _ConversationListState extends State<ConversationList> {
               ),
             ),
             const Text(
-              '8:09 PM',
+              '->',
             ),
           ],
         ),
