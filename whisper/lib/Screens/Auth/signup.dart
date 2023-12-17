@@ -62,10 +62,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               _emailController.text,
                               _passwordController.text,
                             ).then((value) {
-                              Navigator.pushReplacement(
+                              if(value){
+                                Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(builder: (context) => Home()),
                               );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Something went wrong Try again!'),backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                              
                             });
                           },
                           label: 'Register',
@@ -155,7 +164,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 }
 
 
-Future<void> register(
+Future<bool> register(
   String email,
   String password,
   
@@ -182,7 +191,9 @@ Future<void> register(
           .set(newuser.toMap());
     });
     print("User registered: ${userCredential.user?.uid}");
+    return true;
   } catch (e) {
-
+    print(e);
+    return false;
   }
 }

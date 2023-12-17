@@ -2,7 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:whisper/Screens/Auth/otp.dart';
+import 'package:whisper/Screens/Auth/signup.dart';
 import 'package:whisper/Screens/home_screen.dart';
 class LoginScreen extends StatelessWidget {
   TextEditingController _emailController = TextEditingController();

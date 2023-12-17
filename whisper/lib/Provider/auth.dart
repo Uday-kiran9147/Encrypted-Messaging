@@ -40,13 +40,9 @@ class Auth with ChangeNotifier {
   }
 
   Future<bool> saveprofilepicture(File image) async {
-    await EditProfile.saveprofilepicture(image).then((value) {
-      if (value) {
-        notifyListeners();
-        return value;
-      }
-    });
-    return false;
+    bool isUpdated = await EditProfile.saveprofilepicture(image);
+    notifyListeners();
+    return isUpdated;
   }
 
   Future<bool> login() async {
