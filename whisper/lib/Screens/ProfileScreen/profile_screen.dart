@@ -81,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // _prefs.setString('bio', _bioController.text);
     // _prefs.setString('about', _aboutController.text);
     await Provider.of<Auth>(context, listen: false).editProfile(
-        _nameController.text, _bioController.text, _aboutController.text);
+        _nameController.text, _aboutController.text, _bioController.text);
   }
 
   @override
