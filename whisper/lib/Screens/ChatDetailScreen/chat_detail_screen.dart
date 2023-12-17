@@ -217,7 +217,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen>
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, String emali, imageurl) {
+  AppBar _buildAppBar(BuildContext context, String emali,String imageurl) {
     return AppBar(
       elevation: 0,
       automaticallyImplyLeading: false,
@@ -264,16 +264,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen>
                         child: Text(
                           emali,
                           style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
+                              fontSize: 14, fontWeight: FontWeight.w600),
                         ),
                       ),
-                      const SizedBox(
-                        height: 6,
-                      ),
-                      Text(
-                        statu,
-                        style: TextStyle(
-                            color: Colors.grey.shade600, fontSize: 13),
+                      // const SizedBox(
+                      //   height: 6,
+                      // ),
+                      FittedBox(fit: BoxFit.contain,
+                        child: Text(
+                          statu,
+                          style: TextStyle(
+                              color: Colors.grey.shade600, fontSize: 13),
+                        ),
                       ),
                     ],
                   ),
